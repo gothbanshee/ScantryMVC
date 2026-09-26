@@ -1,3 +1,5 @@
 <Solution>
+  <Project Path="Scantry.Core/Scantry.Core.csproj" />
+  <Project Path="Scantry.Data/Scantry.Data.csproj" />
   <Project Path="Scantry/Scantry.csproj" />
 </Solution>
