@@ -1,86 +1,149 @@
 :root {
-    /* Primary colours*/
-
+    /* Custom colour palette - sorted from lightest to darkest*/
+    /* Purples */
+    --wisteria: #b0a8d4;
     --periwinkle: #8a7ec0;
-    --saffron: #e7c208;
-    --pearl-beige: #ded3b4;
+    --indigo-velvet: #473C79;
+    /* Yellows */
+    --bright-gold: #fdf500;
+    --gold: #FFED00;
+    /*Browns*/
     --olive-wood: #706045;
-    /* Additional colours */
-
     --coffee-bean: #23140c;
-    --slate-blue: #7869b8;
-    /* Override Bootstrap's colour variables */
-
+    /* Background colour */
+    --pearl-beige: #eae3cf;
+    /* Override Bootstrap's variables */
+    /* Colours */
     --bs-primary: var(--periwinkle);
     --bs-primary-rgb: 138, 126, 192;
-    --bs-secondary: var(--slate-blue);
-    --bs-warning: var(--saffron);
+    --bs-secondary: var(--indigo-velvet);
+    --bs-warning: var(--gold);
     --bs-danger: var(--coffee-bean);
+    /* Background colour */
     --bs-body-bg: var(--pearl-beige);
     --bs-bg: var(--pearl-beige);
     --bs-body-color: var(--coffee-bean);
+    /* Link colours */
+    --bs-link-color: var(--periwinkle);
     --bs-link-color-rgb: 138, 126, 192;
+    --bs-link-hover-color: var(--indigo-velvet);
+    --bs-link-hover-color-rgb: 71, 60, 121;
+    /* Navbar colour */
+    --bs-emphasis-color-rgb: 35, 20, 12;
+    --bs-navbar-color: rgba(var(--bs-emphasis-color-rgb), 1);
+    --bs-navbar-hover-color: rgba(var(--bs-emphasis-color-rgb), 1);
+    /* Border colour */
+    --bs-border-color: var(--periwinkle);
+    /* Font size */
+    --bs-body-font-size: 1.1rem;
+    /* Other */
+    --bs-focus-ring-color: var(--indigo-velvet);
 }
 
-.btn-periwinkle {
-    background-color: var(--periwinkle);
-    border-color: var(--periwinkle);
-    color: #ffffff;
+.btn {
+    --bs-btn-font-size: 1.1rem;
 }
 
-    .btn-periwinkle:hover {
-        background-color: var(--slate-blue);
-        border-color: var(--slate-blue);
-        color: #ffffff;
+.btn-primary {
+    --bs-btn-color: #ffffff;
+    --bs-btn-bg: var(--periwinkle);
+    --bs-btn-border-color: var(--periwinkle);
+    --bs-btn-hover-bg: var(--indigo-velvet);
+    --bs-btn-hover-border-color: var(--indigo-velvet);
+    --bs-btn-active-bg: var(--indigo-velvet);
+    --bs-btn-active-border-color: var(--indigo-velvet);
+    --bs-btn-disabled-bg: var(--wisteria);
+    --bs-btn-disabled-border-color: var(--wisteria);
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--periwinkle);
+    --bs-btn-border-color: var(--periwinkle);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--indigo-velvet);
+    --bs-btn-hover-border-color: var(--indigo-velvet);
+    --bs-btn-active-bg: var(--indigo-velvet);
+    --bs-btn-active-border-color: var(--indigo-velvet);
+    --bs-btn-disabled-bg: var(--wisteria);
+    --bs-btn-disabled-border-color: var(--wisteria);
+}
+
+.btn-warning {
+    --bs-btn-color: var(--coffee-bean);
+    --bs-btn-bg: var(--bright-gold);
+    --bs-btn-border-color: var(--bright-gold);
+    --bs-btn-hover-color: var(--coffee-bean);
+    --bs-btn-hover-bg: var(--gold);
+    --bs-btn-hover-border-color: var(--gold);
+    --bs-btn-active-bg: var(--gold);
+    --bs-btn-active-border-color: var(--gold);
+    --bs-btn-disabled-bg: var(--bright-gold);
+    --bs-btn-disabled-border-color: var(--bright-gold);
+}
+
+.btn-outline-warning {
+    --bs-btn-color: var(--coffee-bean);
+    --bs-btn-border-color: var(--bright-gold);
+    --bs-btn-hover-color: var(--coffee-bean);
+    --bs-btn-hover-bg: var(--bright-gold);
+    --bs-btn-hover-border-color: var(--bright-gold);
+    --bs-btn-active-bg: var(--bright-gold);
+    --bs-btn-active-border-color: var(--bright-gold);
+    --bs-btn-disabled-bg: var(--bright-gold);
+    --bs-btn-disabled-border-color: var(--bright-gold);
+    --bs-btn-border-width: 2px;
+}
+
+.btn-outline-danger {
+    --bs-btn-color: var(--coffee-bean);
+    --bs-btn-border-color: var(--coffee-bean);
+    --bs-btn-hover-color: var(--gold);
+    --bs-btn-hover-bg: var(--coffee-bean);
+    --bs-btn-hover-border-color: var(--coffee-bean);
+    --bs-btn-active-color: var(--gold);
+    --bs-btn-active-bg: var(--coffee-bean);
+    --bs-btn-active-border-color: var(--coffee-bean);
+    --bs-btn-disabled-color: var(--olive-wood);
+    --bs-btn-disabled-border-color: var(--olive-wood);
+}
+
+.form-check-input:checked {
+    background-color: var(--indigo-velvet);
+    border-color: var(--indigo-velvet);
+}
+
+.form-check-input[type=checkbox]:indeterminate {
+    background-color: var(--indigo-velvet);
+    border-color: var(--indigo-velvet);
+}
+
+/* cool idea - check if i like it when all views are ready */
+a {
+    display: inline-block;
+    transition: text-shadow 0.1s ease-in-out;
+}
+
+    a:hover {
+        text-shadow: 0.2px 0 0 currentColor, -0.2px 0 0 currentColor;
     }
 
-.btn-outline-periwinkle {
-    background-color: transparent;
-    border-color: var(--periwinkle);
-    color: var(--slate-blue);
+::selection {
+    background-color: var(--olive-wood);
+    color: var(--gold);
 }
-
-    .btn-outline-periwinkle:hover, .btn-outline-periwinkle:focus {
-        background-color: var(--slate-blue);
-        border-color: var(--slate-blue);
-        color: #ffffff;
-    }
-
-.btn-saffron {
-    background-color: var(--saffron);
-    border-color: var(--saffron);
-    color: var(--coffee-bean);
-}
-
-.btn-outline.btn-saffron {
-    background-color: transparent;
-    border-color: var(--saffron);
-    color: var(--saffron);
-}
-
-.btn-outline-wood {
-    background-color: transparent;
-    border-color: var(--olive-wood);
-    color: var(--olive-wood);
-}
-
-    .btn-outline-wood:hover, .btn-outline-wood:focus {
-        background-color: var(--olive-wood);
-        color: var(--pearl-beige);
-    }
 
 html {
-    font-size: 14px;
 }
 
 @media (min-width: 768px) {
     html {
-        font-size: 16px;
+        font-size: 18px;
     }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem var(--indigo-velvet);
+    border-color: var(--indigo-velvet);
 }
 
 html {

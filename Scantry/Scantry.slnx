@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="GCommon/Scantry.GCommon.csproj" Id="97eb81ee-96db-4afe-a63c-9a2de07cb249" />
   <Project Path="Scantry.Core/Scantry.Core.csproj" />
   <Project Path="Scantry.Data/Scantry.Data.csproj" />
   <Project Path="Scantry/Scantry.csproj" />
