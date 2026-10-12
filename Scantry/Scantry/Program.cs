@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Scantry.Core.Contracts;
+using Scantry.Core.Services;
 using Scantry.Data;
 using Scantry.Data.Models;
+using Scantry.Data.Repositories;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -17,8 +20,12 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services
     .AddDefaultIdentity<ApplicationUser>()
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<IHouseholdService, HouseholdService>();
+builder.Services.AddScoped<IRepository, Repository>();
 
 builder.Services.Configure<IdentityOptions>(builder.Configuration.GetSection("IdentityOptions"));
 
