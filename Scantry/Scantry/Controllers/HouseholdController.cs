@@ -5,6 +5,8 @@ using Microsoft.IdentityModel.Tokens;
 using Scantry.Core.Contracts;
 using Scantry.Core.Models;
 using Scantry.Data.Models;
+using static Scantry.GCommon.GeneralMessages;
+using static Scantry.GCommon.HouseholdMessages;
 
 namespace Scantry.Controllers
 {
@@ -15,10 +17,11 @@ namespace Scantry.Controllers
 
         public async Task<IActionResult> Index()
         {
-            List<HouseholdServiceModel> households = await householdService.GetAllHouseholdsForUser(GetUserId());
+            List<HouseholdServiceModel> households = await householdService.GetAllHouseholdsForUserWithoutProductsAsync(GetUserId());
 
             if (households.IsNullOrEmpty())
             {
+                TempData["ErrorMessage"] = NoHouseholdJoined;
                 return RedirectToAction(nameof(Create));
             }
 
@@ -30,7 +33,7 @@ namespace Scantry.Controllers
         {
             HouseholdServiceModel model = new();
 
-            return View(model);
+            return View("CreateOrJoin", model);
         }
 
         [HttpPost]
@@ -38,16 +41,150 @@ namespace Scantry.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return View(nameof(Create), model);
             }
 
-            await householdService.CreateHouseholdAsync(model, GetUserId());
+            bool isAdded = await householdService.CreateHouseholdAsync(model, GetUserId());
+            if (isAdded)
+            {
+                TempData["SuccessMessage"] = CreateSuccess;
+            }
+            else
+            {
+                TempData["ErrorMessage"] = GeneralError;
+            }
+
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(int householdId, string householdName)
+        {
+            if (string.IsNullOrWhiteSpace(householdName))
+            {
+                TempData["ErrorMessage"] = EmptyHouseholdName;
+                return RedirectToAction(nameof(Index));
+            }
+
+            bool isRenamed = await householdService.UpdateHouseholdNameAsync(householdId, householdName, GetUserId());
+
+            if (isRenamed)
+            {
+                TempData["SuccessMessage"] = RenameSuccess;
+            }
+            else
+            {
+                TempData["ErrorMessage"] = GeneralError;
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Join(Guid accessToken)
+        {
+            try
+            {
+                bool joinedSuccessfully = await householdService.JoinHouseholdAsync(accessToken, GetUserId());
+
+                if (joinedSuccessfully)
+                {
+                    TempData["SuccessMessage"] = JoinSuccess;
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = UserAlreadyMember;
+                }
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (NullReferenceException)
+            {
+                TempData["ErrorMessage"] = InvalidJoinLink;
+                return View("CreateOrJoin");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Join(string accessToken)
+        {
+            if (!Guid.TryParse(accessToken, out Guid parsedGuid))
+            {
+                ModelState.AddModelError(string.Empty, InvalidAccessToken);
+                return View("CreateOrJoin");
+            }
+
+            try
+            {
+                bool joinedSuccessfully = await householdService.JoinHouseholdAsync(parsedGuid, GetUserId());
+
+                if (joinedSuccessfully)
+                {
+                    TempData["SuccessMessage"] = JoinSuccess;
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = UserAlreadyMember;
+                }
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (NullReferenceException)
+            {
+                ModelState.AddModelError(string.Empty, InvalidAccessToken);
+                return View("CreateOrJoin");
+            }
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Leave(int householdId)
+        {
+            List<ApplicationUser> householdUsers = await householdService.GetAllUsersForHouseholdAsync(householdId);
+
+            bool isDeleted = await (householdService.LeaveHouseholdAsync(householdId, GetUserId()));
+
+            if (isDeleted)
+            {
+                TempData["SuccessMessage"] = LeaveSuccess;
+            }
+            else
+            {
+                TempData["ErrorMessage"] = GeneralError;
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            bool isDeleted = await householdService.DeleteHousehold(id, GetUserId());
+
+            if (isDeleted)
+            {
+                TempData["SuccessMessage"] = DeleteSuccess;
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                TempData["ErrorMessage"] = GeneralError;
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Details(int id)
+        {
+            HouseholdServiceModel model = await householdService.GetHouseholdByIdAsync(id, GetUserId());
+
+            return View(model);
         }
 
         private string GetUserId()
         {
-            return userManager.GetUserId(User);
+            return userManager.GetUserId(User)
+                ?? throw new InvalidOperationException(UserIdNotFound);
         }
     }
 }

@@ -1,0 +1,61 @@
+﻿@using static Scantry.GCommon.HouseholdMessages
+@model IEnumerable<Scantry.Core.Models.HouseholdServiceModel>
+
+@{
+	ViewData["Title"] = "My Households";
+}
+
+<h2 class="text-center">My Households</h2>
+<partial name="_AlertsPartial" />
+
+<table class="table text-center justify-content-center align-middle">
+	<thead>
+		<tr>
+            <th style="width: 35%;">Sharing</th>
+			<th style="width: 25%;">Name</th>
+            <th style="width: 40%;">Manage</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var household in Model)
+		{
+			<tr>
+				<td>
+                    <div class="d-flex flex-column flex-md-row gap-2">
+                        <a href="#" onclick="shareHouseholdToken('@household.AccessToken'); return false;" class="btn btn-outline-warning btn-sm flex-fill py-2 text-center" title="Invite a user">
+                            <i class="bi bi-share"></i> Invite
+                        </a>
+                        <button type="button" class="btn btn-warning btn-sm flex-fill py-2 text-center" data-bs-toggle="modal" data-bs-target="#membersForHouseholdModal-@household.HouseholdId" title="See members">
+                            <i class="bi bi-people"></i>
+                        </button>
+                    </div>
+                </td>
+				<td class="fw-semibold" style="width: 25%;">@household.HouseholdName</td>
+				<td>
+					<div class="action-buttons-grid">
+                        <a asp-action="Details" asp-route-id="@household.HouseholdId" class="btn btn-primary py-2 text-center" title="View Details">
+                            <i class="bi bi-eye fs-5"></i>
+                        </a>
+                        <button type="button" class="btn btn-outline-primary py-2 text-center" title="Rename" data-bs-toggle="modal" data-bs-target="#editModal-@household.HouseholdId">
+                            <i class="bi bi-pencil-square fs-5"></i>
+                        </button>
+						<button type="button" class="btn btn-outline-danger py-2 text-center" title="Leave" data-bs-toggle="modal" data-bs-target="#leaveHouseholdModal-@household.HouseholdId">
+							<i class="bi bi-box-arrow-right fs-5"></i>
+						</button>
+						<button type="button" class="btn btn-danger py-2 text-center" data-bs-toggle="modal" data-bs-target="#universalDeleteModal" data-id="@household.HouseholdId" data-action-url="@Url.Action("Delete", "Household")" data-title="Delete household" data-message="@DeleteConfirmation">
+							<i class="bi bi-trash fs-5"></i>
+						</button>
+				</td>
+			</tr>
+
+			<partial name="_ShowHouseholdUsersModalPartial" model="household" />
+			<partial name="_EditHouseholdModalPartial" model="household" />
+			<partial name="_LeaveHouseholdModalPartial" model="household" />
+			<partial name="_UniversalDeleteModalPartial" model="household" />
+		}
+	</tbody>
+</table>
+
+@section Scripts {
+	<partial name="_ShareJoinLinkScriptPartial" />
+}

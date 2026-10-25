@@ -11,6 +11,7 @@
 	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 	<link rel="stylesheet" href="~/Scantry.styles.css" asp-append-version="true" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
 	<header>
@@ -35,7 +36,7 @@
 								<a class="nav-link" asp-area="" asp-controller="Household" asp-action="Index">My Households</a>
 							</li>
 							<li class="nav-item">
-								<a class="nav-link" asp-area="" asp-controller="Household" asp-action="Create">Create household</a>
+								<a class="nav-link" asp-area="" asp-controller="Household" asp-action="Create">Create or join household</a>
 							</li>
 						}
 					</ul>
@@ -58,6 +59,8 @@
 	<script src="~/lib/jquery/dist/jquery.min.js"></script>
 	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="~/js/site.js" asp-append-version="true"></script>
+	<script src="~/js/deleteModalScript.js"asp-append-version="true"></script>
+
 	@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

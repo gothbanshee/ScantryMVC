@@ -13,10 +13,10 @@ namespace Scantry.Core.Models
                 ErrorMessage = "The Household name must be between {2} and {1} characters long.")]
         public string HouseholdName { get; set; } = null!;
 
-        public Guid AccessToken { get; set; }
+        public string? AccessToken { get; set; }
 
         public List<HouseholdUsers> HouseholdUsers { get; set; } = [];
 
-        public List<HouseholdProduct> InventoryItems { get; set; } = [];
+        public List<HouseholdProduct> HouseholdProducts { get; set; } = [];
     }
 }

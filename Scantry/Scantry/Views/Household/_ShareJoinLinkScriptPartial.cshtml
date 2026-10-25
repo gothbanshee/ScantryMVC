@@ -1,0 +1,24 @@
+﻿<script>
+async function shareHouseholdToken(token) {
+    // Construct the message text and optional join link
+    const shareData = {
+        title: 'Join my Scantry Household',
+        text: `Hey! Join my pantry household in Scantry using this access token: ${token} or the link below`,
+        url: window.location.origin + `/Household/Join?accessToken=${token}` // Use this if you have a join link route!
+    };
+
+    // Check if the browser supports native sharing (supported on mobile & modern browsers)
+    if (navigator.share) {
+        try {
+            await navigator.share(shareData);
+        } catch (err) {
+            // User cancelled or share failed
+            console.log('Share canceled or failed', err);
+        }
+    } else {
+        // Fallback for desktop browsers that don't support navigator.share
+        navigator.clipboard.writeText(token);
+        alert("Access token copied to clipboard! (Sharing not supported on this browser)");
+    }
+}
+</script>

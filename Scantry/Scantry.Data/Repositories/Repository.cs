@@ -5,11 +5,19 @@ namespace Scantry.Data.Repositories
 {
     public class Repository(ApplicationDbContext context) : IRepository
     {
-        private readonly ApplicationDbContext context = context;
-
         public IQueryable<T> All<T>() where T : class
         {
+            return context.Set<T>().AsNoTracking();
+        }
+
+        public IQueryable<T> AllTracked<T>() where T : class
+        {
             return context.Set<T>();
+        }
+
+        public IQueryable<T> GetAllWithPredicate<T>(Expression<Func<T, bool>> predicate) where T : class
+        {
+            return context.Set<T>().Where(predicate).AsNoTracking();
         }
 
         public async Task AddAsync<T>(T entity) where T : class
@@ -17,14 +25,24 @@ namespace Scantry.Data.Repositories
             await context.Set<T>().AddAsync(entity);
         }
 
+        public async Task<int> DeleteAsync<T>(Expression<Func<T, bool>> predicate) where T : class
+        {
+            return await context.Set<T>().Where(predicate).ExecuteDeleteAsync();
+        }
+
         public async Task<int> SaveChangesAsync()
         {
             return await context.SaveChangesAsync();
         }
 
-        public IQueryable<T?> FindAllAsync<T>(Expression<Func<T, bool>> predicate) where T : class
+        public async Task<T?> FirstOrDefaultAsync<T>(Expression<Func<T, bool>> predicate) where T : class
         {
-            return context.Set<T>().Where(predicate).AsNoTracking();
+            return await context.Set<T>().AsNoTracking().FirstOrDefaultAsync(predicate);
+        }
+
+        public async Task<T?> FirstOrDefaultTrackedAsync<T>(Expression<Func<T, bool>> predicate) where T : class
+        {
+            return await context.Set<T>().FirstOrDefaultAsync(predicate);
         }
     }
 }

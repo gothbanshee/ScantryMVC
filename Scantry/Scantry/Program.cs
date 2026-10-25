@@ -5,6 +5,7 @@ using Scantry.Core.Services;
 using Scantry.Data;
 using Scantry.Data.Models;
 using Scantry.Data.Repositories;
+using Scantry.Filters;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,11 @@ builder.Services
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add<HouseholdExceptionFilter>();
+});
 
 builder.Services.AddScoped<IHouseholdService, HouseholdService>();
 builder.Services.AddScoped<IRepository, Repository>();
@@ -43,6 +49,7 @@ else
     app.UseHsts();
 }
 
+app.UseStaticFiles();
 app.UseHttpsRedirection();
 app.UseRouting();
 

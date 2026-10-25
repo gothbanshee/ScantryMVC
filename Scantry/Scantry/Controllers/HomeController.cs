@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Scantry.Models;
 using System.Diagnostics;
+using static Scantry.GCommon.GeneralMessages;
 
 namespace Scantry.Controllers
 {
@@ -19,7 +20,8 @@ namespace Scantry.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            TempData["ErrorMessage"] = GeneralError;
+            return RedirectToAction("Index", "Home");
         }
     }
 }

@@ -17,7 +17,7 @@ namespace Scantry.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.12")
+                .HasAnnotation("ProductVersion", "10.0.13")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -272,13 +272,13 @@ namespace Scantry.Data.Migrations
                         .HasColumnType("int")
                         .HasComment("Id of the Household.");
 
-                    b.Property<string>("UserId")
+                    b.Property<string>("ApplicationUserId")
                         .HasColumnType("nvarchar(450)")
                         .HasComment("Id of the User.");
 
-                    b.HasKey("HouseholdId", "UserId");
+                    b.HasKey("HouseholdId", "ApplicationUserId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("ApplicationUserId");
 
                     b.ToTable("HouseholdUsers");
                 });
@@ -369,15 +369,15 @@ namespace Scantry.Data.Migrations
 
             modelBuilder.Entity("Scantry.Data.Models.HouseholdUsers", b =>
                 {
-                    b.HasOne("Scantry.Data.Models.Household", "Household")
-                        .WithMany("HouseholdUsers")
-                        .HasForeignKey("HouseholdId")
+                    b.HasOne("Scantry.Data.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany("UserHouseholds")
+                        .HasForeignKey("ApplicationUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Scantry.Data.Models.ApplicationUser", "ApplicationUser")
-                        .WithMany("UserHouseholds")
-                        .HasForeignKey("UserId")
+                    b.HasOne("Scantry.Data.Models.Household", "Household")
+                        .WithMany("HouseholdUsers")
+                        .HasForeignKey("HouseholdId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

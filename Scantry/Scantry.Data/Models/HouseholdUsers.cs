@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Scantry.Data.Models
 {
-    [PrimaryKey(nameof(HouseholdId), nameof(UserId))]
     public class HouseholdUsers
     {
         [Comment("Id of the Household.")]
@@ -13,10 +12,9 @@ namespace Scantry.Data.Models
         public Household Household { get; set; } = null!;
 
         [Comment("Id of the User.")]
-        public string UserId { get; set; } = null!;
+        public string ApplicationUserId { get; set; } = null!;
 
-        [ForeignKey(nameof(UserId))]
+        [ForeignKey(nameof(ApplicationUserId))]
         public ApplicationUser ApplicationUser { get; set; } = null!;
-
     }
 }

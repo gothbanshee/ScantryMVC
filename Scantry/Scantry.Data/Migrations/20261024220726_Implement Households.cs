@@ -42,14 +42,14 @@ namespace Scantry.Data.Migrations
                 columns: table => new
                 {
                     HouseholdId = table.Column<int>(type: "int", nullable: false, comment: "Id of the Household."),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false, comment: "Id of the User.")
+                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: false, comment: "Id of the User.")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_HouseholdUsers", x => new { x.HouseholdId, x.UserId });
+                    table.PrimaryKey("PK_HouseholdUsers", x => new { x.HouseholdId, x.ApplicationUserId });
                     table.ForeignKey(
-                        name: "FK_HouseholdUsers_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_HouseholdUsers_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -91,9 +91,9 @@ namespace Scantry.Data.Migrations
                 column: "HouseholdId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HouseholdUsers_UserId",
+                name: "IX_HouseholdUsers_ApplicationUserId",
                 table: "HouseholdUsers",
-                column: "UserId");
+                column: "ApplicationUserId");
         }
 
         /// <inheritdoc />

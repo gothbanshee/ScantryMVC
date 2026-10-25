@@ -1,0 +1,22 @@
+﻿@model Scantry.Core.Models.HouseholdServiceModel
+
+<div class="modal fade centered-modal" id="membersForHouseholdModal-@Model.HouseholdId" tabindex="-1" aria-labelledby="membersForHouseholdLabel-@Model.HouseholdId" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title " id="usersForHouseholdModal-@Model.HouseholdId">Household members in<br />@Model.HouseholdName</h5>
+			</div>
+			<div class="modal-body">
+				<div class="mb-3">
+						@foreach (var householdUser in Model.HouseholdUsers)
+							{
+								<p>@householdUser.ApplicationUser.UserName</p>
+							}				
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>

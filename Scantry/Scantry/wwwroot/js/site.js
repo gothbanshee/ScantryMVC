@@ -1,4 +1,12 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
+﻿document.addEventListener('DOMContentLoaded', function () {
+    // Find any temporary alert boxes on the page
+    const alerts = document.querySelectorAll('#tempAlertError, #tempAlertSuccess');
+    
+    alerts.forEach(alertEl => {
+        // Wait 4 seconds (4000ms), then trigger Bootstrap's alert close
+        setTimeout(() => {
+            const bsAlert = new bootstrap.Alert(alertEl);
+            bsAlert.close();
+        }, 3000);
+    });
+});
