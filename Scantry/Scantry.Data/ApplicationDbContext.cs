@@ -10,7 +10,7 @@ namespace Scantry.Data
 
         public DbSet<Product> Products { get; set; }
 
-        public DbSet<HouseholdUsers> HouseholdUsers { get; set; }
+        public DbSet<HouseholdUser> HouseholdUsers { get; set; }
 
         public DbSet<HouseholdProduct> HouseholdProducts { get; set; }
 
@@ -18,26 +18,43 @@ namespace Scantry.Data
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<HouseholdUsers>()
-                .HasKey(hu => new { hu.HouseholdId, hu.ApplicationUserId });
-
             builder.Entity<HouseholdProduct>()
                 .HasOne(hp => hp.Household)
                 .WithMany(h => h.HouseholdProducts)
                 .HasForeignKey(hp => hp.HouseholdId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<HouseholdUsers>()
+            builder.Entity<HouseholdProduct>()
+                .HasOne(hp => hp.Product)
+                .WithMany()
+                .HasForeignKey(hp => hp.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<HouseholdProduct>()
+                .HasOne(hp => hp.ScannedByUser)
+                .WithMany()
+                .HasForeignKey(hp => hp.ScannedByUserId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            builder.Entity<HouseholdUser>()
                 .HasOne(hu => hu.Household)
                 .WithMany(h => h.HouseholdUsers)
                 .HasForeignKey(hu => hu.HouseholdId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<HouseholdUsers>()
-                .HasOne(hu => hu.ApplicationUser)
+            builder.Entity<HouseholdUser>(entity =>
+            {
+                entity.HasKey(hu => new { hu.HouseholdId, hu.ApplicationUserId });
+
+                entity.HasOne(hu => hu.ApplicationUser)
                 .WithMany(u => u.UserHouseholds)
                 .HasForeignKey(hu => hu.ApplicationUserId)
                 .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            builder.Entity<Product>()
+                .Property(p => p.SizeValue)
+                .HasColumnType("decimal(18,2)");
         }
     }
 }

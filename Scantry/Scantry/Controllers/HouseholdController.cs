@@ -5,8 +5,8 @@ using Microsoft.IdentityModel.Tokens;
 using Scantry.Core.Contracts;
 using Scantry.Core.Models;
 using Scantry.Data.Models;
-using static Scantry.GCommon.GeneralMessages;
-using static Scantry.GCommon.HouseholdMessages;
+using static Scantry.GCommon.Messages.GeneralMessages;
+using static Scantry.GCommon.Messages.HouseholdMessages;
 
 namespace Scantry.Controllers
 {
@@ -140,7 +140,7 @@ namespace Scantry.Controllers
         [HttpPost]
         public async Task<IActionResult> Leave(int householdId)
         {
-            List<ApplicationUser> householdUsers = await householdService.GetAllUsersForHouseholdAsync(householdId);
+            List<HouseholdUserServiceModel> householdUsers = await householdService.GetAllUsersForHouseholdAsync(householdId);
 
             bool isDeleted = await (householdService.LeaveHouseholdAsync(householdId, GetUserId()));
 

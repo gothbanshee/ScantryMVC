@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using static Scantry.GCommon.EntityValidationConstants;
+using static Scantry.GCommon.Constants.EntityValidationConstants;
 
 namespace Scantry.Data.Models
 {
@@ -19,7 +19,7 @@ namespace Scantry.Data.Models
         [Comment("GUID Access Token for joining the Household.")]
         public Guid AccessToken { get; set; }
 
-        public List<HouseholdUsers> HouseholdUsers { get; set; } = null!;
+        public List<HouseholdUser> HouseholdUsers { get; set; } = null!;
 
         public List<HouseholdProduct> HouseholdProducts { get; set; } = null!;
     }

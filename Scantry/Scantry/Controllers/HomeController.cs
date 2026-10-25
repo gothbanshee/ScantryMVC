@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Scantry.Models;
 using System.Diagnostics;
-using static Scantry.GCommon.GeneralMessages;
+using static Scantry.GCommon.Messages.GeneralMessages;
 
 namespace Scantry.Controllers
 {

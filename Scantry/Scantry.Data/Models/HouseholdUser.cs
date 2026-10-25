@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Scantry.Data.Models
 {
-    public class HouseholdUsers
+    public class HouseholdUser
     {
         [Comment("Id of the Household.")]
         public int HouseholdId { get; set; }

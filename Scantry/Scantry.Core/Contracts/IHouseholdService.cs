@@ -19,7 +19,7 @@ namespace Scantry.Core.Contracts
 
         Task<List<HouseholdServiceModel>> GetAllHouseholdsForUserWithoutProductsAsync(string userId);
 
-        Task<List<ApplicationUser>> GetAllUsersForHouseholdAsync(int householdId);
+        Task<List<HouseholdUserServiceModel>> GetAllUsersForHouseholdAsync(int householdId);
 
         /* will need this for admins only*/
         //Task<List<HouseholdServiceModel>> GetAllHouseholdsAsync();

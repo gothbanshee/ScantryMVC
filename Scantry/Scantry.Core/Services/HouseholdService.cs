@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scantry.Core.Contracts;
+using Scantry.Core.Extensions;
 using Scantry.Core.Models;
 using Scantry.Data.Models;
 using Scantry.Data.Repositories;
@@ -19,9 +20,8 @@ namespace Scantry.Core.Services
                 HouseholdProducts = []
             };
 
-            entity.HouseholdUsers.Add(new HouseholdUsers()
+            entity.HouseholdUsers.Add(new HouseholdUser()
             {
-                HouseholdId = entity.HouseholdId,
                 ApplicationUserId = userId
             });
 
@@ -64,13 +64,13 @@ namespace Scantry.Core.Services
                 return false;
             }
 
-            HouseholdUsers householdUser = new()
+            HouseholdUser householdUser = new()
             {
                 HouseholdId = household.HouseholdId,
                 ApplicationUserId = userId,
             };
 
-            await repository.AddAsync<HouseholdUsers>(householdUser);
+            await repository.AddAsync<HouseholdUser>(householdUser);
             int isAdded = await repository.SaveChangesAsync();
 
             return isAdded > 0;
@@ -78,10 +78,9 @@ namespace Scantry.Core.Services
 
         public async Task<bool> LeaveHouseholdAsync(int householdId, string userId)
         {
-            List<ApplicationUser> usersInHousehold = await GetAllUsersForHouseholdAsync(householdId);
-            List<string> userIdsList = [.. usersInHousehold.Select(u => u.Id)];
+            List<HouseholdUserServiceModel> usersInHousehold = await GetAllUsersForHouseholdAsync(householdId);
 
-            if(IsUserAMember(userIdsList, userId) == false)
+            if (IsUserAMember([.. usersInHousehold.Select(u => u.ApplicationUserId)], userId) == false)
             {
                 throw new UnauthorizedAccessException();
             }
@@ -92,17 +91,16 @@ namespace Scantry.Core.Services
             }
             else
             {
-                int rowsDeleted = await repository.DeleteAsync<HouseholdUsers>(hu => hu.HouseholdId == householdId && hu.ApplicationUserId == userId);
+                int rowsDeleted = await repository.DeleteAsync<HouseholdUser>(hu => hu.HouseholdId == householdId && hu.ApplicationUserId == userId);
                 return rowsDeleted > 0;
             }
         }
 
         public async Task<bool> DeleteHousehold(int householdId, string userId)
         {
-            List<ApplicationUser> usersInHousehold = await GetAllUsersForHouseholdAsync(householdId);
-            List<string> userIdsList = [.. usersInHousehold.Select(u => u.Id)];
+            List<HouseholdUserServiceModel> usersInHousehold = await GetAllUsersForHouseholdAsync(householdId);
 
-            if (IsUserAMember(userIdsList, userId) == false)
+            if (IsUserAMember([.. usersInHousehold.Select(u => u.ApplicationUserId)], userId) == false)
             {
                 throw new UnauthorizedAccessException();
             }
@@ -114,35 +112,30 @@ namespace Scantry.Core.Services
 
         public async Task<List<HouseholdServiceModel>> GetAllHouseholdsForUserWithoutProductsAsync(string userId)
         {
-            List<HouseholdServiceModel> householdsForUser = await repository.GetAllWithPredicate<HouseholdUsers>(hu => hu.ApplicationUserId == userId)
-             .Include(hu => hu.Household)
-                 .ThenInclude(h => h.HouseholdUsers)
-                 .ThenInclude(hu => hu.ApplicationUser)
-             .Select(hu => new HouseholdServiceModel()
-             {
-                 HouseholdId = hu.HouseholdId,
-                 HouseholdName = hu.Household.HouseholdName,
-                 AccessToken = hu.Household.AccessToken.ToString(),
-                 HouseholdUsers = hu.Household.HouseholdUsers
-             })
-             .ToListAsync();
+            List<HouseholdUser> householdsForUser = await repository
+                .GetAllWithPredicate<HouseholdUser>(hu => hu.ApplicationUserId == userId)
+                .Include(hu => hu.Household)
+                .ToListAsync();
 
             if (householdsForUser.IsNullOrEmpty())
             {
                 return [];
             }
 
-            return householdsForUser;
+            return [.. householdsForUser
+                .Where(hu => hu.Household != null)
+                .Select(hu => hu.Household.ToServiceModel())];
         }
 
-        public async Task<List<ApplicationUser>> GetAllUsersForHouseholdAsync(int householdId)
+        public async Task<List<HouseholdUserServiceModel>> GetAllUsersForHouseholdAsync(int householdId)
         {
-            List<ApplicationUser> users = await repository.GetAllWithPredicate<HouseholdUsers>(hu => hu.HouseholdId == householdId)
+            List<HouseholdUserServiceModel> users = await repository.GetAllWithPredicate<HouseholdUser>(hu => hu.HouseholdId == householdId)
                 .Include(hu => hu.ApplicationUser)
-                .Select(hu => new ApplicationUser()
+                .Select(hu => new HouseholdUserServiceModel()
                 {
-                    UserName = hu.ApplicationUser.UserName,
-                    Id = hu.ApplicationUser.Id
+                    HouseholdId = hu.HouseholdId,
+                    ApplicationUserId = hu.ApplicationUserId,
+                    UserName = hu.ApplicationUser.UserName ?? "Unknown"
                 })
                 .ToListAsync();
 
@@ -151,11 +144,13 @@ namespace Scantry.Core.Services
 
         public async Task<HouseholdServiceModel> GetHouseholdByIdAsync(int householdId, string userId)
         {
-            Household? household = await repository
-                    .GetAllWithPredicate<Household>(h => h.HouseholdId == householdId)
+            Household? household = await repository.GetAllWithPredicate<Household>(h => h.HouseholdId == householdId)
                     .Include(h => h.HouseholdUsers)
+                        .ThenInclude(hu => hu.ApplicationUser)
                     .Include(h => h.HouseholdProducts)
                         .ThenInclude(hp => hp.Product)
+                    .Include(h => h.HouseholdProducts)
+                        .ThenInclude(hp => hp.ScannedByUser)
                     .FirstOrDefaultAsync()
                     ?? throw new NullReferenceException();
 
@@ -164,16 +159,7 @@ namespace Scantry.Core.Services
                 throw new UnauthorizedAccessException();
             }
 
-            HouseholdServiceModel model = new()
-            {
-                HouseholdId = household.HouseholdId,
-                AccessToken = household.AccessToken.ToString(),
-                HouseholdName = household.HouseholdName,
-                HouseholdUsers = household.HouseholdUsers,
-                HouseholdProducts = household.HouseholdProducts
-            };
-
-            return model;
+            return household.ToServiceModel();
         }
 
         /* will need this for admins only */

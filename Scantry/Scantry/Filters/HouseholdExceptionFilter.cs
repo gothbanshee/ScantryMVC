@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using static Scantry.GCommon.HouseholdMessages;
-using static Scantry.GCommon.GeneralMessages;
+using static Scantry.GCommon.Messages.HouseholdMessages;
+using static Scantry.GCommon.Messages.GeneralMessages;
 
 namespace Scantry.Filters
 {

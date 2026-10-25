@@ -1,4 +1,4 @@
-﻿namespace Scantry.GCommon
+﻿namespace Scantry.GCommon.Messages
 {
     public static class HouseholdMessages
     {

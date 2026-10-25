@@ -1,6 +1,5 @@
-﻿using Scantry.Data.Models;
-using System.ComponentModel.DataAnnotations;
-using static Scantry.GCommon.EntityValidationConstants;
+﻿using System.ComponentModel.DataAnnotations;
+using static Scantry.GCommon.Constants.EntityValidationConstants;
 
 namespace Scantry.Core.Models
 {
@@ -15,8 +14,8 @@ namespace Scantry.Core.Models
 
         public string? AccessToken { get; set; }
 
-        public List<HouseholdUsers> HouseholdUsers { get; set; } = [];
+        public List<HouseholdUserServiceModel> HouseholdUsers { get; set; } = [];
 
-        public List<HouseholdProduct> HouseholdProducts { get; set; } = [];
+        public List<HouseholdProductServiceModel> HouseholdProducts { get; set; } = [];
     }
 }

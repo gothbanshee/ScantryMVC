@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Scantry.Data.Models;
-using static Scantry.GCommon.ValidationConstants;
+using static Scantry.GCommon.Constants.ValidationConstants;
 
 namespace Scantry.Areas.Identity.Pages.Account;
 
@@ -65,7 +65,7 @@ public class RegisterModel : PageModel
     public class InputModel
     {
         [Required]
-        [StringLength(DisplayNameMaxLength, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = DisplayNameMinLength)]
+        [StringLength(UserNameMaxLength, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = UserNameMinLength)]
         [Display(Name = "Username")]
         public string UserName { get; set; } = default!;
 

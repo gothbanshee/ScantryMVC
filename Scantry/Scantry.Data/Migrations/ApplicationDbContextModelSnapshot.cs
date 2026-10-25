@@ -251,17 +251,62 @@ namespace Scantry.Data.Migrations
 
             modelBuilder.Entity("Scantry.Data.Models.HouseholdProduct", b =>
                 {
-                    b.Property<int>("ProductId")
+                    b.Property<int>("HouseholdProductId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasComment("Id of the Product.");
+                        .HasComment("Primary key for the HouseholdProduct entity.");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HouseholdProductId"));
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(20)")
+                        .HasComment("Category of the product - user-defined.");
+
+                    b.Property<int>("CurrentQuantity")
+                        .HasColumnType("int")
+                        .HasComment("Current quantity of the product in the household.");
+
+                    b.Property<DateOnly?>("ExpirationDate")
+                        .HasColumnType("date")
+                        .HasComment("Expiration date of the product in the household - if applicable.");
 
                     b.Property<int>("HouseholdId")
                         .HasColumnType("int")
                         .HasComment("Id of the Household.");
 
-                    b.HasKey("ProductId", "HouseholdId");
+                    b.Property<bool>("IsFavourite")
+                        .HasColumnType("bit")
+                        .HasComment("Flag for favourite products.");
+
+                    b.Property<int>("MinimumThreshold")
+                        .HasColumnType("int")
+                        .HasComment("Threshold for buying reminder - user-defined.");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int")
+                        .HasComment("Id of the Product.");
+
+                    b.Property<string>("ScannedByUserId")
+                        .HasMaxLength(450)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateOnly>("ScannedOn")
+                        .HasColumnType("date")
+                        .HasComment("Date of scanning the product.");
+
+                    b.HasKey("HouseholdProductId");
+
+                    b.HasIndex("Category");
 
                     b.HasIndex("HouseholdId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("ScannedByUserId");
 
                     b.ToTable("HouseholdProducts");
                 });
@@ -292,7 +337,55 @@ namespace Scantry.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"));
 
+                    b.Property<string>("Barcode")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)")
+                        .HasComment("Product barcode.");
+
+                    b.Property<string>("Brand")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(100)")
+                        .HasComment("Product brand.");
+
+                    b.Property<string>("Model")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(150)")
+                        .HasComment("Product model.");
+
+                    b.Property<string>("ProductType")
+                        .IsRequired()
+                        .HasMaxLength(75)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(75)")
+                        .HasComment("Product type.");
+
+                    b.Property<string>("SizeUnit")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(10)")
+                        .HasComment("Product measuring unit.");
+
+                    b.Property<decimal>("SizeValue")
+                        .HasColumnType("decimal(18,2)")
+                        .HasComment("Product size value.");
+
+                    b.Property<string>("Variant")
+                        .HasMaxLength(100)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(100)")
+                        .HasComment("Product variation (if applicable).");
+
                     b.HasKey("ProductId");
+
+                    b.HasIndex("Barcode")
+                        .IsUnique();
 
                     b.ToTable("Products");
                 });
@@ -357,14 +450,21 @@ namespace Scantry.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("Scantry.Data.Models.Product", "Product")
-                        .WithMany("HouseholdProducts")
+                        .WithMany()
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("Scantry.Data.Models.ApplicationUser", "ScannedByUser")
+                        .WithMany()
+                        .HasForeignKey("ScannedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Household");
 
                     b.Navigation("Product");
+
+                    b.Navigation("ScannedByUser");
                 });
 
             modelBuilder.Entity("Scantry.Data.Models.HouseholdUsers", b =>
@@ -396,11 +496,6 @@ namespace Scantry.Data.Migrations
                     b.Navigation("HouseholdProducts");
 
                     b.Navigation("HouseholdUsers");
-                });
-
-            modelBuilder.Entity("Scantry.Data.Models.Product", b =>
-                {
-                    b.Navigation("HouseholdProducts");
                 });
 #pragma warning restore 612, 618
         }
