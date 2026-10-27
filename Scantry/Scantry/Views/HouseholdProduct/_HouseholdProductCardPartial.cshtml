@@ -1,0 +1,88 @@
+﻿@using static Scantry.GCommon.Messages.HouseholdProductMessages
+@model Scantry.Core.Models.HouseholdProductServiceModel
+
+<div class="col">
+    <div class="card shadow border-0 h-auto">
+        <div class="card-body px-3 pt-3 pb-2">
+            <div class="d-flex align-items-center justify-content-center gap-2 mb-1">
+                <div class="card-title">
+                    <h5 class="text-primary fw-bold">
+                        @Model.Product.Brand @Model.Product.Model
+                    </h5>
+                </div>
+            </div>
+            <div class="card-subtitle d-flex flex-grow-1 justify-content-between">
+                <h6 class="text-muted fw-bold ">
+                     @Model.Product.Variant @Model.Product.ProductType
+                </h5>
+                <span class="badge flex-shrink-0 @GetStatusBadgeClass(Model.Status)">
+                    @Model.Status
+                </span>
+            </div>
+            
+            <ul class="list-group list-group-flush small mb-0">
+                <li class="list-group-item d-flex justify-content-between py-1 px-0">
+                    <span class="fw-semibold">Category:</span>
+                    <span>@Model.Category</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between py-1 px-0">
+                    <span class="fw-semibold">Quantity:</span>
+                    <span class="@(Model.IsLowStock ? "text-danger fw-bold" : "")">
+                        @Model.CurrentQuantity (Min: @Model.MinimumThreshold)
+                    </span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between py-1 px-0">
+                    <span class="fw-semibold">Size:</span>
+                    <span>@Model.Product.SizeValue @Model.Product.SizeUnit</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between py-1 px-0">
+                    <span class="fw-semibold">Expires:</span>
+                    <span>@(Model.ExpirationDate?.ToShortDateString() ?? "No Expiry")</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="card-footer mb-4 bg-transparent d-flex justify-content-center align-items-center gap-2">
+
+            <a asp-controller="HouseholdProduct"
+               asp-action="Edit"
+               asp-route-id="@Model.HouseholdProductId"
+               class="btn btn-sm btn-outline-primary">
+                <i class="bi bi-pencil"></i> Edit
+            </a>
+
+            <form asp-controller="HouseholdProduct" 
+              asp-action="ToggleFavourite" 
+              asp-route-id="@Model.HouseholdProductId" 
+              asp-route-returnUrl="@Context.Request.Path@Context.Request.QueryString" 
+              method="post" 
+              class="m-0">
+                <button type="submit" class="btn btn-sm @(Model.IsFavourite ? "btn-primary" : "btn-outline-primary")" title="Toggle Favourite">
+                    <i class="bi @(Model.IsFavourite ? "bi-heart-fill" : "bi-heart")"></i>
+                </button>
+            </form>
+
+            <button type="button"
+                    class="btn btn-sm btn-outline-danger"
+                    data-bs-toggle="modal"
+                    data-bs-target="#universalDeleteModal"
+                    data-id="@Model.HouseholdProductId"
+                    data-action-url="@Url.Action("Delete", "HouseholdProduct")"
+                    data-title="Delete Product"
+                    data-message="@DeleteConfirmation">
+                <i class="bi bi-trash"></i> Delete
+            </button>
+
+        </div>
+    </div>
+</div>
+
+
+@functions {
+    string GetStatusBadgeClass(Scantry.GCommon.Enums.ExpirationStatus status) => status switch {
+        Scantry.GCommon.Enums.ExpirationStatus.Fresh => "bg-success",
+        Scantry.GCommon.Enums.ExpirationStatus.Expiring => "bg-warning text-dark",
+        Scantry.GCommon.Enums.ExpirationStatus.Expired => "bg-danger",
+        _ => "bg-secondary"
+    };
+}

@@ -1,0 +1,43 @@
+﻿@model IEnumerable<Scantry.Core.Models.HouseholdProductServiceModel>
+
+@{
+    ViewData["Title"] = ViewBag.PageTitle ?? "Household Products";
+}
+
+<partial name="_AlertsPartial" />
+
+<div class="container mt-4">
+    <div class="row align-items-center mb-4">
+        <div class="col-auto">
+            <a class="btn btn-primary" asp-controller="Household" asp-action="Details" asp-route-id="@ViewBag.HouseholdId" title="Back">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+        </div>
+        <div class="col text-center">
+            <h2 class="mb-0"><i class="@ViewBag.HeaderIcon"></i> @ViewBag.HouseholdName - @ViewBag.PageTitle</h2>
+        </div>
+        <div class="col-auto">
+        <a class="btn btn-success" asp-action="Scan" asp-route-id="@ViewBag.HouseholdId" asp-route-householdName="@ViewBag.HouseholdName">
+            <i class="bi bi-upc-scan"></i> Scan Product
+        </a>
+</div>
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info text-center" role="alert">
+            @ViewBag.EmptyMessage
+        </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3 align-items-start">
+            @foreach (var householdProduct in Model)
+            {
+                <partial name="_HouseholdProductCardPartial" model="householdProduct" />
+            }
+        </div>
+
+        <partial name="_UniversalDeleteModalPartial"/>
+    }
+</div>

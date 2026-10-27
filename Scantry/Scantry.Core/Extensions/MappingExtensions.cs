@@ -30,11 +30,8 @@ namespace Scantry.Core.Extensions
                 Category = householdProduct.Category,
                 CurrentQuantity = householdProduct.CurrentQuantity,
                 MinimumThreshold = householdProduct.MinimumThreshold,
-                ScannedOn = householdProduct.ScannedOn,
                 ExpirationDate = householdProduct.ExpirationDate,
                 IsFavourite = householdProduct.IsFavourite,
-                ScannedByUserId = householdProduct.ScannedByUserId,
-                ScannedByUserName = householdProduct.ScannedByUser?.UserName ?? "Unknown",
                 HouseholdId = householdProduct.HouseholdId,
                 Product = householdProduct.Product.ToServiceModel() // Calls the product extension above!
             };

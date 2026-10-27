@@ -2,11 +2,86 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    <p>Make shopping fun</p>
-     <a class="btn btn-warning" asp-area="" asp-controller="Home" asp-action="Index">Test warning</a>
-     <a class="btn btn-outline-warning" asp-area="" asp-controller="Home" asp-action="Index">Test outline warning</a>
-     <a class="btn btn-outline-danger" asp-area="" asp-controller="Home" asp-action="Index">Test outline danger</a>
+<div class="container py-5">
+    <!-- Hero Section -->
+    <div class="row align-items-center py-4 mb-5">
+        <div class="col-lg-6 text-center text-lg-start mb-4 mb-lg-0">
+            <h1 class="display-4 fw-bold text-primary mb-3">
+                <i class="bi bi-box-seam me-2"></i>Scantry
+            </h1>
+            <p class="lead text-secondary mb-4">
+                Your intelligent family pantry companion. Effortlessly manage household inventory, track expiration dates, scan barcodes on the fly, and collaborate securely with your family.
+            </p>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <div class="d-flex justify-content-center justify-content-lg-start gap-3 flex-wrap">
+                    <a class="btn btn-primary btn-lg px-4 shadow-sm" asp-controller="Household" asp-action="Index">
+                        <i class="bi bi-house-door me-2"></i>My Households
+                    </a>
+                    <a class="btn btn-outline-secondary btn-lg px-4" asp-controller="Household" asp-action="Create">
+                        <i class="bi bi-plus-circle me-2"></i>Create Household
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="d-flex justify-content-center justify-content-lg-start gap-3 flex-wrap">
+                    <a class="btn btn-primary btn-lg px-4 shadow-sm" asp-area="Identity" asp-page="/Account/Register">
+                        <i class="bi bi-person-plus me-2"></i>Get Started
+                    </a>
+                    <a class="btn btn-outline-primary btn-lg px-4" asp-area="Identity" asp-page="/Account/Login">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+                    </a>
+                </div>
+            }
+        </div>
+        <div class="col-lg-6 text-center">
+            <div class="p-5 bg-light rounded-4 shadow-sm border">
+                <div class="display-1 text-primary mb-3">
+                    <i class="bi bi-upc-scan"></i>
+                </div>
+                <h4 class="fw-bold text-dark">Smart Barcode Scanner</h4>
+                <p class="text-muted small mb-0">
+                    Scan products instantly using your camera. Automatically fetches item details from global open databases!
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Grid -->
+    <div class="row g-4 py-3 text-center">
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 p-4">
+                <div class="fs-1 text-primary mb-3">
+                    <i class="bi bi-people"></i>
+                </div>
+                <h5 class="fw-bold">Collaborative Households</h5>
+                <p class="text-muted small mb-0">
+                    Share pantry access with family members securely using unique access tokens and real-time inventory syncing.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 p-4">
+                <div class="fs-1 text-warning mb-3">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <h5 class="fw-bold">Expiration & Low Stock Alerts</h5>
+                <p class="text-muted small mb-0">
+                    Never let food go to waste. Track expiration dates and get notified when items drop below your minimum threshold.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0 p-4">
+                <div class="fs-1 text-success mb-3">
+                    <i class="bi bi-cloud-arrow-down"></i>
+                </div>
+                <h5 class="fw-bold">Global Product Catalog</h5>
+                <p class="text-muted small mb-0">
+                    Powered by Open Food Facts & Open Beauty Facts to automatically recognize groceries, cosmetics, and household essentials.
+                </p>
+            </div>
+        </div>
+    </div>
 </div>

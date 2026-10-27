@@ -289,15 +289,6 @@ namespace Scantry.Data.Migrations
                         .HasColumnType("int")
                         .HasComment("Id of the Product.");
 
-                    b.Property<string>("ScannedByUserId")
-                        .HasMaxLength(450)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateOnly>("ScannedOn")
-                        .HasColumnType("date")
-                        .HasComment("Date of scanning the product.");
-
                     b.HasKey("HouseholdProductId");
 
                     b.HasIndex("Category");
@@ -306,12 +297,10 @@ namespace Scantry.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.HasIndex("ScannedByUserId");
-
                     b.ToTable("HouseholdProducts");
                 });
 
-            modelBuilder.Entity("Scantry.Data.Models.HouseholdUsers", b =>
+            modelBuilder.Entity("Scantry.Data.Models.HouseholdUser", b =>
                 {
                     b.Property<int>("HouseholdId")
                         .HasColumnType("int")
@@ -455,19 +444,12 @@ namespace Scantry.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Scantry.Data.Models.ApplicationUser", "ScannedByUser")
-                        .WithMany()
-                        .HasForeignKey("ScannedByUserId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.Navigation("Household");
 
                     b.Navigation("Product");
-
-                    b.Navigation("ScannedByUser");
                 });
 
-            modelBuilder.Entity("Scantry.Data.Models.HouseholdUsers", b =>
+            modelBuilder.Entity("Scantry.Data.Models.HouseholdUser", b =>
                 {
                     b.HasOne("Scantry.Data.Models.ApplicationUser", "ApplicationUser")
                         .WithMany("UserHouseholds")

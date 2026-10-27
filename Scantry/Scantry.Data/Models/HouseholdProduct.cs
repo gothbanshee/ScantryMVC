@@ -28,16 +28,11 @@ namespace Scantry.Data.Models
         [Comment("Flag for buying reminder.")]
         public bool IsLowStock => CurrentQuantity <= MinimumThreshold;
 
-        //
-
-        [Comment("Date of scanning the product.")]
-        public DateOnly ScannedOn { get; set; }
-
         [Comment("Expiration date of the product in the household - if applicable.")]
         public DateOnly? ExpirationDate { get; set; }
 
         [Comment("Expiration status of the product batch.")]
-        public ExpirationStatus Status
+        public ExpirationStatus ExpirationStatus
         {
             get
             {
@@ -54,7 +49,7 @@ namespace Scantry.Data.Models
                 }
                 else if (daysUntilExpiry < ExpirationDateCheck)
                 {
-                    return ExpirationStatus.ExpiringSoon;
+                    return ExpirationStatus.Expiring;
                 }
                 else
                 {
@@ -66,15 +61,6 @@ namespace Scantry.Data.Models
         [Comment("Flag for favourite products.")]
         public bool IsFavourite { get; set; } = false;
 
-        //
-
-        [MaxLength(450)]
-        [Unicode(true)]
-        public string? ScannedByUserId { get; set; }
-
-        [ForeignKey(nameof(ScannedByUserId))]
-        public ApplicationUser? ScannedByUser { get; set; }
-
         [Comment("Id of the Product.")]
         public int ProductId { get; set; }
 
@@ -85,6 +71,6 @@ namespace Scantry.Data.Models
         public int HouseholdId { get; set; }
 
         [ForeignKey(nameof(HouseholdId))]
-        public required Household Household { get; set; } = null!;
+        public Household Household { get; set; } = null!;
     }
 }

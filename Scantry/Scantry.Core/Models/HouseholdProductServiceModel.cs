@@ -22,10 +22,6 @@ namespace Scantry.Core.Models
 
         public bool IsLowStock => CurrentQuantity <= MinimumThreshold;
 
-        //
-
-        public DateOnly ScannedOn { get; set; }
-
         public DateOnly? ExpirationDate { get; set; }
 
         public ExpirationStatus Status
@@ -45,7 +41,7 @@ namespace Scantry.Core.Models
                 }
                 else if (daysUntilExpiry < ExpirationDateCheck)
                 {
-                    return ExpirationStatus.ExpiringSoon;
+                    return ExpirationStatus.Expiring;
                 }
                 else
                 {
@@ -55,14 +51,6 @@ namespace Scantry.Core.Models
         }
 
         public bool IsFavourite { get; set; } = false;
-
-        [StringLength(450)]
-        [Unicode(true)]
-        public string? ScannedByUserId { get; set; }
-
-        [StringLength(UserNameMaxLength, MinimumLength = UserNameMinLength)]
-        [Unicode(true)]
-        public string ScannedByUserName { get; set; } = null!;
 
         public ProductServiceModel Product { get; set; } = null!;
 

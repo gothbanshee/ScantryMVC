@@ -30,12 +30,6 @@ namespace Scantry.Data
                 .HasForeignKey(hp => hp.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Entity<HouseholdProduct>()
-                .HasOne(hp => hp.ScannedByUser)
-                .WithMany()
-                .HasForeignKey(hp => hp.ScannedByUserId)
-                .OnDelete(DeleteBehavior.SetNull);
-
             builder.Entity<HouseholdUser>()
                 .HasOne(hu => hu.Household)
                 .WithMany(h => h.HouseholdUsers)

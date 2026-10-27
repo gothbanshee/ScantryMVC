@@ -42,7 +42,14 @@
 						<button type="button" class="btn btn-outline-danger py-2 text-center" title="Leave" data-bs-toggle="modal" data-bs-target="#leaveHouseholdModal-@household.HouseholdId">
 							<i class="bi bi-box-arrow-right fs-5"></i>
 						</button>
-						<button type="button" class="btn btn-danger py-2 text-center" data-bs-toggle="modal" data-bs-target="#universalDeleteModal" data-id="@household.HouseholdId" data-action-url="@Url.Action("Delete", "Household")" data-title="Delete household" data-message="@DeleteConfirmation">
+						<button type="button"
+							class="btn btn-danger py-2 text-center"
+							data-bs-toggle="modal"
+							data-bs-target="#universalDeleteModal"
+							data-id="@household.HouseholdId"
+							data-action-url="@Url.Action("Delete", "Household")"
+							data-title="Delete household"
+							data-message="@DeleteConfirmation">
 							<i class="bi bi-trash fs-5"></i>
 						</button>
 					</div>

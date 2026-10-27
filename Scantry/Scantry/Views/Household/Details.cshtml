@@ -6,9 +6,10 @@
 <partial name="_AlertsPartial" />
 
 <div class="row justify-content-between align-items-center">
-	<!-- add an icon later instead of text -->
 	<div class="col">
-		<a class="btn btn-primary" asp-action="Index">Back</a>
+		<a class="btn btn-primary" asp-action="Index" title="Back">
+			<i class="bi bi-arrow-left"></i>
+		</a>
 	</div>
 	<div class="col text-center">
 		<h4>@Model.HouseholdName</h4>
@@ -27,16 +28,19 @@
 
 	<div class="row g-4">
 		<div class="col-md-6">
-			<partial name="_DashboardCardPartial" model='("All Items", "View and manage all items currently stored in this household.", "AllItems", Model.HouseholdId, "View All", "bi bi-box-seam")' />
+			<partial name="_DashboardCardPartial" model='("All Items", "View and manage all items currently stored in this household.", "HouseholdProduct", "MyProducts", Model.HouseholdId, Model.HouseholdName, "View All", "bi bi-box-seam")' />
 		</div>
 		<div class="col-md-6">
-			<partial name="_DashboardCardPartial" model='("Low-Stock Items", "Quickly see what is running low and needs to be restocked.", "LowStock", Model.HouseholdId, "Check Stock", "bi bi-exclamation-triangle")' />
+			<partial name="_DashboardCardPartial" model='("Low-Stock Items", "Quickly see what is running low and needs to be restocked.", "HouseholdProduct", "LowStockProducts", Model.HouseholdId, Model.HouseholdName, "Check Stock", "bi bi-exclamation-triangle")' />
 		</div>
 		<div class="col-md-6">
-			<partial name="_DashboardCardPartial" model='("Favourite Items", "Your most bookmarked pantry goods.", "Favourites", Model.HouseholdId, "View Favourites", "bi bi-star")' />
+			<partial name="_DashboardCardPartial" model='("Favourite Items", "Your most bookmarked pantry goods.", "HouseholdProduct", "Favourites", Model.HouseholdId, Model.HouseholdName, "View Favourites", "bi bi-star")' />
 		</div>
 		<div class="col-md-6">
-			<partial name="_DashboardCardPartial" model='("Category View", "Browse items filtered by a single specific category.", "Categories", Model.HouseholdId, "Browse Categories", "bi bi-tags")' />
+			@{
+				string expiringDescription = $"Browse items that are expiring in the next {Scantry.GCommon.Constants.EntityValidationConstants.ExpirationDateCheck} days.";
+			}
+			<partial name="_DashboardCardPartial" model='("Expiring View", expiringDescription, "HouseholdProduct", "Expiring", Model.HouseholdId, Model.HouseholdName, "Check expiring items", "bi bi-tags")' />
 		</div>
 	</div>
 </div>

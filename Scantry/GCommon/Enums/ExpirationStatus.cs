@@ -7,7 +7,7 @@ namespace Scantry.GCommon.Enums
     public enum ExpirationStatus
     {
         Fresh,
-        ExpiringSoon,
+        Expiring,
         Expired
     }
 }

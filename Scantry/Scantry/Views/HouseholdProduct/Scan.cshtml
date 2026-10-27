@@ -1,0 +1,69 @@
+﻿@{
+    ViewData["Title"] = "Scan Barcode";
+    int householdId = ViewBag.HouseholdId;
+    string householdName = ViewBag.HouseholdName;
+}
+
+<div class="container mt-4" style="max-width: 600px;">
+    <div class="row align-items-center mb-4">
+        <div class="col-auto">
+            <a class="btn btn-outline-primary" asp-action="MyProducts" asp-route-id="@householdId" asp-route-householdName="@householdName">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+        </div>
+        <div class="col text-center">
+            <h3 class="mb-0"><i class="bi bi-upc-scan"></i> Scan Barcode</h3>
+        </div>
+        <div class="col-auto" style="width: 50px;"></div>
+    </div>
+
+    <div class="card shadow border-0">
+        <div class="card-body p-4 text-center">
+            <!-- Camera viewport container -->
+            <div id="reader" style="width: 100%; border-radius: 8px; overflow: hidden;" class="mb-3"></div>
+            
+            <div id="scan-feedback" class="text-muted small mb-3">Position the barcode within the camera frame.</div>
+
+            <!-- Fallback: Manual Barcode Entry Form -->
+            <form asp-action="HandleScannedBarcode" method="post" id="barcodeForm">
+                <input type="hidden" name="householdId" value="@householdId" />
+                <input type="hidden" name="householdName" value="@householdName" />
+                <input type="hidden" id="barcodeInput" name="barcode" />
+
+                <div class="input-group">
+                    <input type="text" id="manualBarcode" class="form-control" placeholder="Or enter barcode manually..." />
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Include Html5-Qrcode CDN -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script>
+        function onScanSuccess(decodedText, decodedResult) {
+            // Stop scanner once detected
+            html5QrcodeScanner.clear().then(_ => {
+                document.getElementById('barcodeInput').value = decodedText;
+                document.getElementById('barcodeForm').submit();
+            }).catch(error => {
+                console.error("Failed to clear html5QrcodeScanner. ", error);
+            });
+        }
+
+        function onScanFailure(error) {
+            // Handle scan failure/no code detected (safe to ignore or log quietly)
+        }
+
+        let html5QrcodeScanner = new Html5QrcodeScanner(
+            "reader", { fps: 10, qrbox: { width: 250, height: 150 } }, false);
+        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+
+        // Manual submit helper
+        document.getElementById('manualBarcode').addEventListener('change', function() {
+            document.getElementById('barcodeInput').value = this.value;
+        });
+    </script>
+}

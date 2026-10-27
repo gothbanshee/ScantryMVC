@@ -30,8 +30,12 @@ builder.Services.AddControllersWithViews(options =>
     options.Filters.Add<HouseholdExceptionFilter>();
 });
 
-builder.Services.AddScoped<IHouseholdService, HouseholdService>();
 builder.Services.AddScoped<IRepository, Repository>();
+builder.Services.AddScoped<IHouseholdService, HouseholdService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IHouseholdProductService, HouseholdProductService>();
+
+builder.Services.AddHttpClient();
 
 builder.Services.Configure<IdentityOptions>(builder.Configuration.GetSection("IdentityOptions"));
 

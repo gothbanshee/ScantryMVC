@@ -164,13 +164,13 @@ namespace Scantry.Controllers
             if (isDeleted)
             {
                 TempData["SuccessMessage"] = DeleteSuccess;
-                return RedirectToAction(nameof(Index));
             }
             else
             {
                 TempData["ErrorMessage"] = GeneralError;
-                return RedirectToAction(nameof(Index));
             }
+
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]

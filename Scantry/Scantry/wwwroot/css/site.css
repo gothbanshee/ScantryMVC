@@ -44,6 +44,10 @@
     --bs-success-text-emphasis: #ffffff;
     --bs-success-bg-subtle: var(--wisteria);
     --bs-success-border-subtle: #ffffff;
+    /* info */
+    --bs-info-text-emphasis: var(--olive-wood);
+    --bs-info-bg-subtle: var(--gold);
+    --bs-info-border-subtle: var(--gold);
     /* danger */
     --bs-danger-text-emphasis: var(--gold);
     --bs-danger-bg-subtle: var(--olive-wood);
@@ -255,40 +259,3 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
-
-/* Cards */
-.cards {
-    max-width: 700px;
-    margin: 1em auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-    grid-gap: 20px;
-}
-
-.card {
-    border: 1px solid #999999;
-    border-radius: 3px;
-    display: grid;
-    grid-template-rows: max-content 200px 1fr;
-}
-
-    .card img {
-        object-fit: cover;
-        width: 100%;
-        height: 100%;
-    }
-
-    .card h2 {
-        margin: 0;
-        padding: 0.5rem;
-    }
-
-    .card .content {
-        padding: 0.5rem;
-    }
-
-    .card footer {
-        background-color: #333333;
-        color: white;
-        padding: 0.5rem;
-    }

@@ -40,10 +40,7 @@ namespace Scantry.Core.Services
 
             List<string> userIdsList = [.. household.HouseholdUsers.Select(hu => hu.ApplicationUserId)];
 
-            if (IsUserAMember(userIdsList, userId) == false)
-            {
-                throw new UnauthorizedAccessException();
-            }
+            IsUserAMember(userIdsList, userId);
 
             household.HouseholdName = householdName;
             return await repository.SaveChangesAsync() > 0;
@@ -80,10 +77,7 @@ namespace Scantry.Core.Services
         {
             List<HouseholdUserServiceModel> usersInHousehold = await GetAllUsersForHouseholdAsync(householdId);
 
-            if (IsUserAMember([.. usersInHousehold.Select(u => u.ApplicationUserId)], userId) == false)
-            {
-                throw new UnauthorizedAccessException();
-            }
+            IsUserAMember([.. usersInHousehold.Select(u => u.ApplicationUserId)], userId);
 
             if (usersInHousehold.Count == 1)
             {
@@ -98,12 +92,7 @@ namespace Scantry.Core.Services
 
         public async Task<bool> DeleteHousehold(int householdId, string userId)
         {
-            List<HouseholdUserServiceModel> usersInHousehold = await GetAllUsersForHouseholdAsync(householdId);
-
-            if (IsUserAMember([.. usersInHousehold.Select(u => u.ApplicationUserId)], userId) == false)
-            {
-                throw new UnauthorizedAccessException();
-            }
+            IsUserAMember(householdId, userId);
 
             int householdDeleted = await repository.DeleteAsync<Household>(h => h.HouseholdId == householdId);
 
@@ -115,6 +104,7 @@ namespace Scantry.Core.Services
             List<HouseholdUser> householdsForUser = await repository
                 .GetAllWithPredicate<HouseholdUser>(hu => hu.ApplicationUserId == userId)
                 .Include(hu => hu.Household)
+                .Include(hu => hu.ApplicationUser)
                 .ToListAsync();
 
             if (householdsForUser.IsNullOrEmpty())
@@ -149,8 +139,6 @@ namespace Scantry.Core.Services
                         .ThenInclude(hu => hu.ApplicationUser)
                     .Include(h => h.HouseholdProducts)
                         .ThenInclude(hp => hp.Product)
-                    .Include(h => h.HouseholdProducts)
-                        .ThenInclude(hp => hp.ScannedByUser)
                     .FirstOrDefaultAsync()
                     ?? throw new NullReferenceException();
 
@@ -177,9 +165,25 @@ namespace Scantry.Core.Services
         //        .ToListAsync();
         //}
 
-        private static bool IsUserAMember(List<string> userIdsList, string userId)
+        private static bool IsUserAMember(List<string> usersInHousehold, string userId)
         {
-            return userIdsList.Contains(userId);
+            if (usersInHousehold.Contains(userId))
+            {
+                return true;
+            }
+            else throw new UnauthorizedAccessException();
+        }
+
+        private bool IsUserAMember(int householdId, string userId)
+        {
+            List<string> usersInHousehold = [..repository.GetAllWithPredicate<HouseholdUser>(hu => hu.HouseholdId == householdId)
+                .Select(hu => hu.ApplicationUserId)];
+
+            if (usersInHousehold.Contains(userId))
+            {
+                return true;
+            }
+            else throw new UnauthorizedAccessException();
         }
     }
 }
