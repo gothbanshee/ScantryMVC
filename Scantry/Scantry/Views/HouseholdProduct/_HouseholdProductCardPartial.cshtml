@@ -7,13 +7,14 @@
             <div class="d-flex align-items-center justify-content-center gap-2 mb-1">
                 <div class="card-title">
                     <h5 class="text-primary fw-bold">
-                        @Model.Product.Brand @Model.Product.Model
+                     @Model.Product.ProductType @Model.Product.Brand
                     </h5>
                 </div>
             </div>
             <div class="card-subtitle d-flex flex-grow-1 justify-content-between">
                 <h6 class="text-muted fw-bold ">
-                     @Model.Product.Variant @Model.Product.ProductType
+                      @Model.Product.Model @Model.Product.Variant
+
                 </h5>
                 <span class="badge flex-shrink-0 @GetStatusBadgeClass(Model.Status)">
                     @Model.Status

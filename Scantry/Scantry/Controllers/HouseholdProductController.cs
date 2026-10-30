@@ -172,7 +172,7 @@ namespace Scantry.Controllers
                     if (externalProduct == null)
                     {
                         TempData["ErrorMessage"] = $"Product with barcode {barcode} not found anywhere. Please register it manually.";
-                        return RedirectToAction("Add", "Product", new { barcode, householdId, householdName });
+                        return RedirectToAction("Index", "Product");
                     }
 
                     // 3. Automatically create the global Product record in the DB

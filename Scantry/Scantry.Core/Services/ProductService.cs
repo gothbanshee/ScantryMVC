@@ -15,7 +15,9 @@ namespace Scantry.Core.Services
     {
         public async Task<List<ProductServiceModel>> GetAllProductsAsync()
         {
-            var products = await repository.All<Product>().ToListAsync();
+            var products = await repository.All<Product>()
+                .OrderBy(hp => hp.ProductType)
+                .ToListAsync();
 
             if (products.Count == 0)
             {

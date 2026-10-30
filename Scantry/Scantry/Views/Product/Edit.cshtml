@@ -58,7 +58,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label asp-for="SizeUnit" class="form-label fw-semibold"></label>
-                                <input asp-for="SizeUnit" class="form-control" />
+                                <select asp-for="SizeUnit" asp-items="ViewBag.SizeUnits" class="form-select"></select>
                                 <span asp-validation-for="SizeUnit" class="text-danger small"></span>
                             </div>
                         </div>
@@ -66,6 +66,7 @@
                         <div class="d-grid gap-2 mt-4">
                             <button type="submit" class="btn btn-primary btn-lg">Update Product</button>
                             <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+
                         </div>
                     </form>
                 </div>
