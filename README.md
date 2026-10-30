@@ -51,3 +51,54 @@ Scantry is an N-tier ASP.NET Core MVC web application designed to help household
 5. Bash
 `dotnet ef database update`
 6. Run the application and register an account to start managing households!
+
+## Screenshots
+
+### Homepage
+  <img width="1838" height="960" alt="image" src="https://github.com/user-attachments/assets/c54babb5-7286-4d1b-8b68-6beac8a61efc" />
+
+### Register and Login
+  <img width="1853" height="959" alt="image" src="https://github.com/user-attachments/assets/d06274f8-9ce9-4dde-85d7-f50f4e85dec0" />
+  <img width="1853" height="959" alt="image" src="https://github.com/user-attachments/assets/5af02f41-c3bc-4313-8795-d0e9150a7423" />
+
+### Create or join a household - create or join as many households as you need!
+  <img width="1853" height="959" alt="image" src="https://github.com/user-attachments/assets/b2d1b2b1-e229-4551-932d-6d72c624e140" />
+
+### My Households - here you can find and manage all households that you are a member in.
+<img width="1853" height="959" alt="image" src="https://github.com/user-attachments/assets/a836e8ba-a5fc-46d6-9fb6-e395a6edd798" />
+
+* **Sharing:**
+  * Directly share a joining link for the household in an app of your choice. Every registered user will join the household after clicking the link. If the user isn't logged in, they will be redirected to the log-in page.  
+  * See the current members of the household
+
+* **Household name**
+  
+* **Manage**
+  * See household details - all products, favourites, expiring, low-stock items
+  * Rename household
+  * Leave household
+  * Delete household and all of its information
+<img width="1853" height="959" alt="image" src="https://github.com/user-attachments/assets/284364b7-3d82-4057-9d47-b8f138ec04a2" />
+
+### Household details - here you can find all your scanned items, favourites, expiring products (where applicable), low-stock items. You also have the button for sharing the joining link again.
+<img width="1853" height="959" alt="image" src="https://github.com/user-attachments/assets/eaa5e07e-6e48-4b9e-90b4-0b0bf1537818" />
+
+### Local product catalogue - full list of all items that any user ever scanned, along with the basic information for them.
+<img width="1853" height="959" alt="image" src="https://github.com/user-attachments/assets/a29b9bd9-e343-45fe-93de-ce6541febfc8" />
+
+* Editing product info in the local catalogue - The catalogue will be only shown to the admins after the next update. Users will only be able to report wrong product information, which will alert admins, so that they can check and edit it, if needed. Right now every user can edit the items. Deleting items is not implemented on purpose.
+<img width="1853" height="959" alt="image" src="https://github.com/user-attachments/assets/7e380e63-9375-4a21-8774-e8236174a8f8" />
+
+### Scanning new products - The scanning button "Add new product" is available in the local product catalogue and also in all of the lists in a household's details.
+* You can either scan a product's barcode with your device's camera or manually enter the barcode. The app looks for the barcode in the local product catalogue first, and if not found, searches in external APIs.
+  * Upon scanning when in a household's details, the product is automatically added to the local catalogue (if not already existing) and also to the household.
+    * If you scan or enter the barcode of an item that is already in your household's list, it's quantity is automatically increased by 1.
+  * Upon scanning from the local product catalogue, the product is only added to the local catalogue.
+
+<img width="1853" height="959" alt="image" src="https://github.com/user-attachments/assets/5408dcc9-bada-40c4-ba4f-45a78cfddb48" />
+
+<img width="1853" height="959" alt="image" src="https://github.com/user-attachments/assets/85617a0a-eb86-42ec-b776-e790c28dbe77" />
+
+### Household details
+<img width="1853" height="959" alt="image" src="https://github.com/user-attachments/assets/eac2e5b6-6b59-4e22-9f24-37dda08ecaa3" />
+* **All Items** - displays all products added for this household, along with their current quantity and minimum threshold. Default value after scanning a new item for the household is 1.
