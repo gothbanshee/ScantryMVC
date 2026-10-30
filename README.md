@@ -101,4 +101,16 @@ Scantry is an N-tier ASP.NET Core MVC web application designed to help household
 
 ### Household details
 <img width="1853" height="959" alt="image" src="https://github.com/user-attachments/assets/eac2e5b6-6b59-4e22-9f24-37dda08ecaa3" />
+
 * **All Items** - displays all products added for this household, along with their current quantity and minimum threshold. Default value after scanning a new item for the household is 1.
+<img width="1853" height="959" alt="image" src="https://github.com/user-attachments/assets/9b6eccef-6420-4144-b8f2-3a8f395271f3" />
+
+* **Low-Stock Items** - displays item if the current quantity is equal or less than the minimum threshold for the item.
+<img width="1853" height="959" alt="image" src="https://github.com/user-attachments/assets/3a943b1e-a147-4b1f-9838-91ed9b7d40d0" />
+
+* **Favourite Items** - displays the items marked as favourites.
+ <img width="1853" height="959" alt="image" src="https://github.com/user-attachments/assets/53b1dfcf-6207-4464-a824-dacca78e900a" />
+
+* **Expiring Items** - displays the items expiring in the next 10 days.
+<img width="1853" height="959" alt="image" src="https://github.com/user-attachments/assets/97254db2-f8d2-406f-a5a4-43850bdb201a" />
+
