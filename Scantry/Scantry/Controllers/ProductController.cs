@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Scantry.Core.Contracts;
@@ -6,33 +7,36 @@ using Scantry.Core.Models;
 using Scantry.Data.Models;
 using Scantry.GCommon.Enums;
 using static Scantry.GCommon.Messages.GeneralMessages;
+using static Scantry.GCommon.Messages.ProductMessages;
 
 namespace Scantry.Controllers
 {
-    public class ProductController(IProductService productService, IHouseholdProductService householdProductService, UserManager<ApplicationUser> userManager) : Controller
+    [Authorize]
+    public class ProductController(IProductService productService, UserManager<ApplicationUser> userManager) : Controller
     {
         private readonly UserManager<ApplicationUser> userManager = userManager;
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            var products = await productService.GetAllProductsAsync();
+            List<ProductServiceModel> products = await productService.GetAllProductsAsync();
             return View(products);
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var model = await productService.GetProductForEditAsync(id);
+            ProductServiceModel? product = await productService.GetProductForEditAsync(id);
 
-            if (model == null)
+            if (product == null)
             {
-                TempData["ErrorMessage"] = "Product not found.";
-                return RedirectToAction("Index", "Home");
+                TempData["ErrorMessage"] = GlobalProductNotFound;
+                return RedirectToAction("Index", "Product");
             }
 
-            ViewBag.SizeUnits = new SelectList(GetSizeUnitsList(), model?.SizeUnit);
-            return View(model);
+            ViewBag.SizeUnits = new SelectList(GetSizeUnitsList(), product?.SizeUnit);
+            return View(product);
         }
 
         [HttpPost]
@@ -40,26 +44,21 @@ namespace Scantry.Controllers
         {
             if (!ModelState.IsValid)
             {
+                ViewBag.SizeUnits = new SelectList(GetSizeUnitsList(), product.SizeUnit);
                 return View(product);
             }
 
             bool isUpdated = await productService.UpdateProductAsync(product);
             if (isUpdated)
             {
-                TempData["SuccessMessage"] = "Global product catalog updated!";
+                TempData["SuccessMessage"] = productEditSuccess;
             }
             else
             {
-                TempData["ErrorMessage"] = "Failed to update product.";
+                TempData["ErrorMessage"] = productEditFail;
             }
 
             return RedirectToAction("Index", "Product");
-        }
-
-        private string GetUserId()
-        {
-            return userManager.GetUserId(User)
-                ?? throw new InvalidOperationException(UserIdNotFound);
         }
 
         private static List<string> GetSizeUnitsList()

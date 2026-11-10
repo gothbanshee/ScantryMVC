@@ -35,6 +35,7 @@ namespace Scantry.Core.Models
                 ErrorMessage = "The Variant name cannot be more than {1} characters long.")]
         [Unicode(true)]
         public string? Variant { get; set; }                // e.g., "Whitening / Charcoal"
+        public decimal SizeValue { get; set; }
 
         [Required]
         [StringLength(SizeUnitMaxLength, MinimumLength = SizeUnitMinLength,
@@ -42,6 +43,5 @@ namespace Scantry.Core.Models
         [Unicode(false)]
         public required string SizeUnit { get; set; }       // e.g., "ml" -- see Class SizeUnits for options
 
-        public decimal SizeValue { get; set; }
     }
 }

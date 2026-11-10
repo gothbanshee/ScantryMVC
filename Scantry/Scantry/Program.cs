@@ -35,7 +35,12 @@ builder.Services.AddScoped<IHouseholdService, HouseholdService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IHouseholdProductService, HouseholdProductService>();
 
-builder.Services.AddHttpClient();
+builder.Services.AddHttpClient<IProductService, ProductService>(client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(7);
+
+    client.DefaultRequestHeaders.UserAgent.ParseAdd("ScantryApp/1.0 (contact@scantry.com)");
+});
 
 builder.Services.Configure<IdentityOptions>(builder.Configuration.GetSection("IdentityOptions"));
 

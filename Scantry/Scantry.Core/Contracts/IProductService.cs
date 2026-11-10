@@ -6,8 +6,8 @@ namespace Scantry.Core.Contracts
     {
         Task<List<ProductServiceModel>> GetAllProductsAsync();
         Task<int?> GetProductIdByBarcodeAsync(string barcode);
-        Task<ExternalProductModel?> FetchProductFromExternalApiAsync(string barcode);
-        Task<int> CreateGlobalProductFromExternalAsync(ExternalProductModel model);
+        Task<ProductServiceModel?> FetchProductFromExternalApiAsync(string barcode);
+        Task<int> CreateGlobalProductFromExternalAsync(ProductServiceModel model);
         Task<ProductServiceModel?> GetProductForEditAsync(int productId);
         Task<bool> UpdateProductAsync(ProductServiceModel model);
     }
