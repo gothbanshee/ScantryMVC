@@ -14,7 +14,6 @@
             <div class="card-subtitle d-flex flex-grow-1 justify-content-between">
                 <h6 class="text-muted fw-bold ">
                       @Model.Product.Model @Model.Product.Variant
-
                 </h5>
                 <span class="badge flex-shrink-0 @GetStatusBadgeClass(Model.Status)">
                     @Model.Status
@@ -70,7 +69,7 @@
                     data-id="@Model.HouseholdProductId"
                     data-action-url="@Url.Action("Delete", "HouseholdProduct")"
                     data-title="Delete Product"
-                    data-message="@DeleteConfirmation">
+                    data-message="@DeleteProductConfirmation">
                 <i class="bi bi-trash"></i> Delete
             </button>
 

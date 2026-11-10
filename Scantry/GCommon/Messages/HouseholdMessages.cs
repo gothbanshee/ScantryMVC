@@ -7,10 +7,11 @@
         public const string NoHouseholdJoined = "You are not a member of any household!";
 
         /* Create household */
-        public const string CreateSuccess = "You have successfully created a new household!";
+        public const string CreateHouseholdSuccess = "You have successfully created a new household!";
 
         /* Rename household */
-        public const string EmptyHouseholdName = "Household name cannot be empty.";
+        public const string EmptyHouseholdName = "Household name cannot be empty. Please try again.";
+        public const string HouseholdNameTooLong = "Household name cannot be longer than 50 charachter. Please try again.";
         public const string RenameSuccess = "You have successfully renamed the household!";
 
         /* Join household */

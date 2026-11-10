@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Scantry.Data.Models;
-using static Scantry.GCommon.Constants.ValidationConstants;
+using static Scantry.GCommon.Constants.UserValidationConstants;
 
 namespace Scantry.Areas.Identity.Pages.Account;
 

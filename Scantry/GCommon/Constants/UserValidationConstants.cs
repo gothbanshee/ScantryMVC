@@ -1,6 +1,6 @@
 ﻿namespace Scantry.GCommon.Constants
 {
-    public static class ValidationConstants
+    public static class UserValidationConstants
     {
         public const int UserNameMinLength = 2;
         public const int UserNameMaxLength = 35;

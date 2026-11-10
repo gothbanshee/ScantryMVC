@@ -1,13 +1,13 @@
 ﻿@model IEnumerable<Scantry.Core.Models.ProductServiceModel>
 
 @{
-    ViewData["Title"] = "Global Product Catalog";
+    ViewData["Title"] = "Local Product Catalogue";
 }
 
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="text-primary fw-bold mb-0">
-            <i class="bi bi-collection"></i> Product Catalog
+            <i class="bi bi-collection"></i> Local Product Catalogue
         </h2>
         <a asp-controller="HouseholdProduct" asp-action="Scan" class="btn btn-primary">
             <i class="bi bi-plus-circle"></i> Add New Product
@@ -18,7 +18,7 @@
     {
         <div class="alert alert-info text-center py-4 shadow-sm" role="alert">
             <i class="bi bi-info-circle fs-4 d-block mb-2"></i>
-            No products found in the global catalog.
+            @ProductMessages.noScannedProducts
         </div>
     }
     else

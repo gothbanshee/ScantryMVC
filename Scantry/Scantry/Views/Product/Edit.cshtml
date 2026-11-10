@@ -1,7 +1,7 @@
 ﻿@model Scantry.Core.Models.ProductServiceModel
 
 @{
-    ViewData["Title"] = "Edit Catalog Product";
+    ViewData["Title"] = "Edit local product";
 }
 
 <div class="container py-4">
@@ -10,7 +10,7 @@
             <div class="card shadow border-0 bg-white">
                 <div class="card-body p-4">
                     <h2 class="text-center mb-4 text-primary fw-bold">
-                        <i class="bi bi-pencil-square"></i> Edit Global Product
+                        <i class="bi bi-pencil-square"></i> Edit local product
                     </h2>
 
                     <form asp-action="Edit" method="post">
@@ -39,7 +39,7 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label asp-for="ProductType" class="form-label fw-semibold"></label>
+                                <label asp-for="ProductType" class="form-label fw-semibold">Product type</label>
                                 <input asp-for="ProductType" class="form-control" />
                                 <span asp-validation-for="ProductType" class="text-danger small"></span>
                             </div>
@@ -52,12 +52,12 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label asp-for="SizeValue" class="form-label fw-semibold"></label>
+                                <label asp-for="SizeValue" class="form-label fw-semibold">Size</label>
                                 <input asp-for="SizeValue" class="form-control" type="number" step="0.01" />
                                 <span asp-validation-for="SizeValue" class="text-danger small"></span>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label asp-for="SizeUnit" class="form-label fw-semibold"></label>
+                                <label asp-for="SizeUnit" class="form-label fw-semibold">Size unit</label>
                                 <select asp-for="SizeUnit" asp-items="ViewBag.SizeUnits" class="form-select"></select>
                                 <span asp-validation-for="SizeUnit" class="text-danger small"></span>
                             </div>
@@ -65,7 +65,7 @@
 
                         <div class="d-grid gap-2 mt-4">
                             <button type="submit" class="btn btn-primary btn-lg">Update Product</button>
-                            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-warning">Cancel</a>
 
                         </div>
                     </form>
