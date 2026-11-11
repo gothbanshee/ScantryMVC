@@ -6,22 +6,18 @@ using Scantry.Core.Contracts;
 using Scantry.Core.Models;
 using Scantry.Data.Models;
 using Scantry.GCommon.Enums;
+using static Scantry.Extensions.ClaimsPrincipalExtensions;
 using static Scantry.GCommon.Messages.GeneralMessages;
 using static Scantry.GCommon.Messages.HouseholdProductMessages;
 
 namespace Scantry.Controllers
 {
     [Authorize]
-    public class HouseholdProductController(
-        IHouseholdProductService householdProductService,
-        IProductService productService,
-        UserManager<ApplicationUser> userManager) : Controller
+    public class HouseholdProductController(IHouseholdProductService householdProductService, IProductService productService) : Controller
     {
-        private readonly UserManager<ApplicationUser> userManager = userManager;
-
         public async Task<IActionResult> MyProducts(int id, string householdName)
         {
-            List<HouseholdProductServiceModel> products = await householdProductService.GetAllProductsForHouseholdAsync(id, GetUserId());
+            List<HouseholdProductServiceModel> products = await householdProductService.GetAllProductsForHouseholdAsync(id, User.GetUserId());
 
             ViewBag.HouseholdName = householdName;
             ViewBag.HouseholdId = id;
@@ -34,7 +30,7 @@ namespace Scantry.Controllers
 
         public async Task<IActionResult> LowStockProducts(int id, string householdName)
         {
-            List<HouseholdProductServiceModel> lowStockProducts = await householdProductService.GetLowStockAsync(id, GetUserId());
+            List<HouseholdProductServiceModel> lowStockProducts = await householdProductService.GetLowStockAsync(id, User.GetUserId());
 
             ViewBag.HouseholdName = householdName;
             ViewBag.HouseholdId = id;
@@ -47,7 +43,7 @@ namespace Scantry.Controllers
 
         public async Task<IActionResult> Favourites(int id, string householdName)
         {
-            List<HouseholdProductServiceModel> favouriteProducts = await householdProductService.GetFavouritesAsync(id, GetUserId());
+            List<HouseholdProductServiceModel> favouriteProducts = await householdProductService.GetFavouritesAsync(id, User.GetUserId());
 
             ViewBag.HouseholdName = householdName;
             ViewBag.HouseholdId = id;
@@ -60,7 +56,7 @@ namespace Scantry.Controllers
 
         public async Task<IActionResult> Expiring(int id, string householdName)
         {
-            List<HouseholdProductServiceModel> expiringProducts = await householdProductService.GetExpiringAsync(id, GetUserId());
+            List<HouseholdProductServiceModel> expiringProducts = await householdProductService.GetExpiringAsync(id, User.GetUserId());
 
             ViewBag.HouseholdName = householdName;
             ViewBag.HouseholdId = id;
@@ -76,14 +72,14 @@ namespace Scantry.Controllers
         {
             try
             {
-                await householdProductService.ToggleFavouriteAsync(id, GetUserId());
+                await householdProductService.ToggleFavouriteAsync(id, User.GetUserId());
             }
             catch (Exception)
             {
-                TempData["ErrorMessage"] = FavouriteUpdateFail;
+                TempData["ErrorMessage"] = GeneralError;
             }
 
-            TempData["SuccessMessage"] = ChangedFavouriteStatusSuccess;
+            TempData["SuccessMessage"] = FavouriteUpdateSuccess;
 
             string? referer = Request.Headers["Referer"].ToString();
             if (!string.IsNullOrEmpty(referer))
@@ -97,9 +93,15 @@ namespace Scantry.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var model = await householdProductService.GetProductForEditAsync(id, GetUserId());
+            HouseholdProductEditModel? model = await householdProductService.GetProductForEditAsync(id, User.GetUserId());
 
-            ViewBag.Categories = new SelectList(GetCategoriesList(), model?.Category);
+            if (model == null)
+            {
+                TempData["ErrorMessage"] = HouseholdProductNotFound;
+                return RedirectToAction("Index", "Household");
+            }
+
+            ViewBag.Categories = new SelectList(GetCategoriesList(), model.Category);
 
             return View(model);
         }
@@ -113,8 +115,16 @@ namespace Scantry.Controllers
                 return View(model);
             }
 
-            bool isUpdated = await householdProductService.UpdateHouseholdProductAsync(model, GetUserId());
-            TempData["SuccessMessage"] = "Product updated successfully!";
+            bool isUpdated = await householdProductService.UpdateHouseholdProductAsync(model, User.GetUserId());
+
+            if (isUpdated)
+            {
+                TempData["SuccessMessage"] = UpdateProductSuccess;
+            }
+            else
+            {
+                TempData["ErrorMessage"] = GeneralError;
+            }
 
             return RedirectToAction(nameof(MyProducts), new { id = model.HouseholdId, householdName = model.HouseholdName });
         }
@@ -122,11 +132,11 @@ namespace Scantry.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
-            bool isDeleted = await householdProductService.DeleteHouseholdProductAsync(id, GetUserId());
+            bool isDeleted = await householdProductService.DeleteHouseholdProductAsync(id, User.GetUserId());
 
             if (isDeleted)
             {
-                TempData["SuccessMessage"] = DeleteSuccess;
+                TempData["SuccessMessage"] = DeleteProductSuccess;
             }
             else
             {
@@ -139,7 +149,7 @@ namespace Scantry.Controllers
                 return Redirect(referer);
             }
 
-            return RedirectToAction("MyHouseholds", "Household");
+            return RedirectToAction("Index", "Household");
         }
 
         [HttpGet]
@@ -161,27 +171,23 @@ namespace Scantry.Controllers
 
             try
             {
-                // 1. Check local catalog via ProductService
                 int? productId = await productService.GetProductIdByBarcodeAsync(barcode);
 
                 if (productId == null)
                 {
-                    // 2. Not found locally? Search the internet via ProductService
-                    ExternalProductModel? externalProduct = await productService.FetchProductFromExternalApiAsync(barcode);
+                    ProductServiceModel? externalProduct = await productService.FetchProductFromExternalApiAsync(barcode);
 
                     if (externalProduct == null)
                     {
-                        TempData["ErrorMessage"] = $"Product with barcode {barcode} not found anywhere. Please register it manually.";
+                        TempData["ErrorMessage"] = $"Product with barcode {barcode} not found anywhere. Please report it for manual registration.";
                         return RedirectToAction("Index", "Product");
                     }
 
-                    // 3. Automatically create the global Product record in the DB
                     productId = await productService.CreateGlobalProductFromExternalAsync(externalProduct);
                 }
 
-                // 4. Add to household inventory
-                await householdProductService.AddProductToHouseholdAsync(householdId, productId.Value, GetUserId());
-                TempData["SuccessMessage"] = "Product found online and added to your inventory!";
+                await householdProductService.AddProductToHouseholdAsync(householdId, productId.Value, User.GetUserId());
+                TempData["SuccessMessage"] = ProductAddedToHousehold;
             }
             catch (Exception)
             {
@@ -189,12 +195,6 @@ namespace Scantry.Controllers
             }
 
             return RedirectToAction(nameof(MyProducts), new { id = householdId, householdName });
-        }
-
-        private string GetUserId()
-        {
-            return userManager.GetUserId(User)
-                ?? throw new InvalidOperationException(UserIdNotFound);
         }
 
         private static List<string> GetCategoriesList()

@@ -7,17 +7,17 @@ using Scantry.Core.Models;
 using Scantry.Data.Models;
 using static Scantry.GCommon.Messages.GeneralMessages;
 using static Scantry.GCommon.Messages.HouseholdMessages;
+using static Scantry.GCommon.Constants.EntityValidationConstants;
+using static Scantry.Extensions.ClaimsPrincipalExtensions;
 
 namespace Scantry.Controllers
 {
     [Authorize]
-    public class HouseholdController(IHouseholdService householdService, UserManager<ApplicationUser> userManager) : Controller
+    public class HouseholdController(IHouseholdService householdService) : Controller
     {
-        private readonly UserManager<ApplicationUser> userManager = userManager;
-
         public async Task<IActionResult> Index()
         {
-            List<HouseholdServiceModel> households = await householdService.GetAllHouseholdsForUserWithoutProductsAsync(GetUserId());
+            List<HouseholdServiceModel> households = await householdService.GetAllHouseholdsForUserWithoutProductsAsync(User.GetUserId());
 
             if (households.IsNullOrEmpty())
             {
@@ -41,13 +41,15 @@ namespace Scantry.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(nameof(Create), model);
+                ViewBag.ErrorMessage = HouseholdNameTooLong;
+                return View("CreateOrJoin", model);
             }
 
-            bool isAdded = await householdService.CreateHouseholdAsync(model, GetUserId());
+            bool isAdded = await householdService.CreateHouseholdAsync(model, User.GetUserId());
+
             if (isAdded)
             {
-                TempData["SuccessMessage"] = CreateSuccess;
+                TempData["SuccessMessage"] = CreateHouseholdSuccess;
             }
             else
             {
@@ -63,18 +65,23 @@ namespace Scantry.Controllers
             if (string.IsNullOrWhiteSpace(householdName))
             {
                 TempData["ErrorMessage"] = EmptyHouseholdName;
-                return RedirectToAction(nameof(Index));
             }
-
-            bool isRenamed = await householdService.UpdateHouseholdNameAsync(householdId, householdName, GetUserId());
-
-            if (isRenamed)
+            else if (householdName.Length > HouseholdNameMaxLength)
             {
-                TempData["SuccessMessage"] = RenameSuccess;
+                TempData["ErrorMessage"] = HouseholdNameTooLong;
             }
             else
             {
-                TempData["ErrorMessage"] = GeneralError;
+                bool isRenamed = await householdService.UpdateHouseholdNameAsync(householdId, householdName, User.GetUserId());
+
+                if (isRenamed)
+                {
+                    TempData["SuccessMessage"] = RenameSuccess;
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = GeneralError;
+                }
             }
 
             return RedirectToAction(nameof(Index));
@@ -85,7 +92,7 @@ namespace Scantry.Controllers
         {
             try
             {
-                bool joinedSuccessfully = await householdService.JoinHouseholdAsync(accessToken, GetUserId());
+                bool joinedSuccessfully = await householdService.JoinHouseholdAsync(accessToken, User.GetUserId());
 
                 if (joinedSuccessfully)
                 {
@@ -100,7 +107,7 @@ namespace Scantry.Controllers
             }
             catch (NullReferenceException)
             {
-                TempData["ErrorMessage"] = InvalidJoinLink;
+                ViewBag.ErrorMessage = InvalidJoinLink;
                 return View("CreateOrJoin");
             }
         }
@@ -116,7 +123,7 @@ namespace Scantry.Controllers
 
             try
             {
-                bool joinedSuccessfully = await householdService.JoinHouseholdAsync(parsedGuid, GetUserId());
+                bool joinedSuccessfully = await householdService.JoinHouseholdAsync(parsedGuid, User.GetUserId());
 
                 if (joinedSuccessfully)
                 {
@@ -142,7 +149,7 @@ namespace Scantry.Controllers
         {
             List<HouseholdUserServiceModel> householdUsers = await householdService.GetAllUsersForHouseholdAsync(householdId);
 
-            bool isDeleted = await (householdService.LeaveHouseholdAsync(householdId, GetUserId()));
+            bool isDeleted = await (householdService.LeaveHouseholdAsync(householdId, User.GetUserId()));
 
             if (isDeleted)
             {
@@ -159,7 +166,7 @@ namespace Scantry.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
-            bool isDeleted = await householdService.DeleteHousehold(id, GetUserId());
+            bool isDeleted = await householdService.DeleteHousehold(id, User.GetUserId());
 
             if (isDeleted)
             {
@@ -176,15 +183,9 @@ namespace Scantry.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
-            HouseholdServiceModel model = await householdService.GetHouseholdByIdAsync(id, GetUserId());
+            HouseholdServiceModel model = await householdService.GetHouseholdByIdAsync(id, User.GetUserId());
 
             return View(model);
-        }
-
-        private string GetUserId()
-        {
-            return userManager.GetUserId(User)
-                ?? throw new InvalidOperationException(UserIdNotFound);
         }
     }
 }

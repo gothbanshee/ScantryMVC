@@ -4,28 +4,24 @@ using Scantry.Core.Extensions;
 using Scantry.Core.Models;
 using Scantry.Data.Models;
 using Scantry.Data.Repositories;
+using static Scantry.Core.Extensions.MappingExtensions;
 using static Scantry.GCommon.Constants.EntityValidationConstants;
 
 namespace Scantry.Core.Services
 {
-    public class HouseholdProductService(IRepository repository) : IHouseholdProductService
+    public class HouseholdProductService(IRepository repository) : BaseService(repository), IHouseholdProductService
     {
         public async Task<List<HouseholdProductServiceModel>> GetAllProductsForHouseholdAsync(int householdId, string userId)
         {
             await IsUserAMember(householdId, userId);
 
-            List<HouseholdProduct> productsForHousehold = await repository
-                .GetAllWithPredicate<HouseholdProduct>(hp => hp.HouseholdId == householdId)
-                .Include(hp => hp.Product)
-                .OrderBy(hp => hp.Product.ProductType)
-                .ToListAsync();
+            List<HouseholdProduct> productsForHousehold = await repository.GetAllWithPredicate<HouseholdProduct>(hp => hp.HouseholdId == householdId)
+                                                                          .Include(hp => hp.Product)
+                                                                          .OrderBy(hp => hp.Product.ProductType)
+                                                                          .ToListAsync();
 
-            if (productsForHousehold.Count == 0)
-            {
-                return [];
-            }
-
-            return [.. productsForHousehold.Select(hp => hp.ToServiceModel())];
+            return productsForHousehold.Count != 0 ? [.. productsForHousehold.Select(hp => hp.ToServiceModel())]
+                                                   : [];
         }
 
         public async Task<List<HouseholdProductServiceModel>> GetLowStockAsync(int householdId, string userId)
@@ -33,17 +29,13 @@ namespace Scantry.Core.Services
             await IsUserAMember(householdId, userId);
 
             List<HouseholdProduct> lowStockProducts = await repository.All<HouseholdProduct>()
-                .Where(hp => hp.HouseholdId == householdId && hp.CurrentQuantity <= hp.MinimumThreshold)
-                .Include(hp => hp.Product)
-                .OrderBy(hp => hp.Product.ProductType)
-                .ToListAsync();
+                                                                      .Where(hp => hp.HouseholdId == householdId && hp.CurrentQuantity <= hp.MinimumThreshold)
+                                                                      .Include(hp => hp.Product)
+                                                                      .OrderBy(hp => hp.Product.ProductType)
+                                                                      .ToListAsync();
 
-            if (lowStockProducts.Count == 0)
-            {
-                return [];
-            }
-
-            return [.. lowStockProducts.Select(hp => hp.ToServiceModel())];
+            return lowStockProducts.Count != 0 ? [.. lowStockProducts.Select(hp => hp.ToServiceModel())]
+                                               : [];
         }
 
         public async Task<List<HouseholdProductServiceModel>> GetFavouritesAsync(int householdId, string userId)
@@ -51,17 +43,13 @@ namespace Scantry.Core.Services
             await IsUserAMember(householdId, userId);
 
             List<HouseholdProduct> favouriteProducts = await repository.All<HouseholdProduct>()
-                .Where(hp => hp.HouseholdId == householdId && hp.IsFavourite)
-                .Include(hp => hp.Product)
-                .OrderBy(hp => hp.Product.ProductType)
-                .ToListAsync();
+                                                                       .Where(hp => hp.HouseholdId == householdId && hp.IsFavourite)
+                                                                       .Include(hp => hp.Product)
+                                                                       .OrderBy(hp => hp.Product.ProductType)
+                                                                       .ToListAsync();
 
-            if (favouriteProducts.Count == 0)
-            {
-                return [];
-            }
-
-            return [.. favouriteProducts.Select(hp => hp.ToServiceModel())];
+            return favouriteProducts.Count != 0 ? [.. favouriteProducts.Select(hp => hp.ToServiceModel())]
+                                                : [];
         }
 
         public async Task<List<HouseholdProductServiceModel>> GetExpiringAsync(int householdId, string userId)
@@ -78,50 +66,36 @@ namespace Scantry.Core.Services
                     .OrderBy(hp => hp.Product.ProductType)
                     .ToListAsync();
 
-            if (expiringProducts.Count == 0)
-            {
-                return [];
-            }
-
-            return [.. expiringProducts.Select(hp => hp.ToServiceModel())];
+            return expiringProducts.Count != 0 ? [.. expiringProducts.Select(hp => hp.ToServiceModel())]
+                                               : [];
         }
 
         public async Task<HouseholdProductEditModel?> GetProductForEditAsync(int householdProductId, string userId)
         {
-            var hp = await repository.AllTracked<HouseholdProduct>()
+            HouseholdProduct? householdProduct = await repository.AllTracked<HouseholdProduct>()
                 .Include(p => p.Product)
                 .Include(p => p.Household)
-                .FirstOrDefaultAsync(p => p.HouseholdProductId == householdProductId)
-                ?? throw new NullReferenceException();
+                .FirstOrDefaultAsync(p => p.HouseholdProductId == householdProductId);
 
-            await IsUserAMember(hp.HouseholdId, userId);
+            if (householdProduct == null)
+                return null;
 
-            return new HouseholdProductEditModel
-            {
-                HouseholdProductId = hp.HouseholdProductId,
-                HouseholdId = hp.HouseholdId,
-                HouseholdName = hp.Household.HouseholdName,
-                Category = hp.Category, // <--- Make sure this is mapped!
-                CurrentQuantity = hp.CurrentQuantity,
-                MinimumThreshold = hp.MinimumThreshold,
-                ExpirationDate = hp.ExpirationDate,
-                ProductName = $"{hp.Product.Brand} {hp.Product.Model}",
-                ProductTypeAndVariant = $"{hp.Product.ProductType} ({hp.Product.Variant})"
-            };
+            await IsUserAMember(householdProduct.HouseholdId, userId);
+
+            return householdProduct?.ToEditServiceModel();
         }
 
         public async Task<bool> UpdateHouseholdProductAsync(HouseholdProductEditModel model, string userId)
         {
-            HouseholdProduct householdProduct = await repository.AllTracked<HouseholdProduct>()
-                .FirstOrDefaultAsync(hp => hp.HouseholdProductId == model.HouseholdProductId)
-                ?? throw new NullReferenceException();
+            HouseholdProduct? householdProduct = await repository
+                .FirstOrDefaultTrackedAsync<HouseholdProduct>(hp => hp.HouseholdProductId == model.HouseholdProductId);
+
+            if (householdProduct == null)
+                return false;
 
             await IsUserAMember(householdProduct.HouseholdId, userId);
 
-            householdProduct.Category = model.Category;
-            householdProduct.CurrentQuantity = model.CurrentQuantity;
-            householdProduct.MinimumThreshold = model.MinimumThreshold;
-            householdProduct.ExpirationDate = model.ExpirationDate;
+            householdProduct = model.ToEditEntity(householdProduct);
 
             return await repository.SaveChangesAsync() > 0;
         }
@@ -133,9 +107,7 @@ namespace Scantry.Core.Services
                 .FirstOrDefaultAsync(hp => hp.HouseholdProductId == householdProductId);
 
             if (householdProduct == null)
-            {
                 return false;
-            }
 
             await IsUserAMember(householdProduct.HouseholdId, userId);
 
@@ -186,18 +158,6 @@ namespace Scantry.Core.Services
             }
 
             await repository.SaveChangesAsync();
-        }
-
-        private async Task<bool> IsUserAMember(int householdId, string userId)
-        {
-            List<string> usersInHousehold = await repository.GetAllWithPredicate<HouseholdUser>(hu => hu.HouseholdId == householdId)
-                .Select(hu => hu.ApplicationUserId).ToListAsync();
-
-            if (usersInHousehold.Contains(userId))
-            {
-                return true;
-            }
-            else throw new UnauthorizedAccessException();
         }
     }
 }

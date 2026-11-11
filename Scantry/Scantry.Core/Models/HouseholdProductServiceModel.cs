@@ -2,7 +2,7 @@
 using Scantry.GCommon.Enums;
 using System.ComponentModel.DataAnnotations;
 using static Scantry.GCommon.Constants.EntityValidationConstants;
-using static Scantry.GCommon.Constants.ValidationConstants;
+using static Scantry.GCommon.Constants.UserValidationConstants;
 
 namespace Scantry.Core.Models
 {

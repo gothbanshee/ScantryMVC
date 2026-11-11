@@ -31,33 +31,6 @@ namespace Scantry.Data.Models
         [Comment("Expiration date of the product in the household - if applicable.")]
         public DateOnly? ExpirationDate { get; set; }
 
-        [Comment("Expiration status of the product batch.")]
-        public ExpirationStatus ExpirationStatus
-        {
-            get
-            {
-                if (!ExpirationDate.HasValue)
-                {
-                    return ExpirationStatus.Fresh;
-                }
-
-                int daysUntilExpiry = ExpirationDate.Value.DayNumber - DateOnly.FromDateTime(DateTime.Today).DayNumber;
-
-                if (daysUntilExpiry < 0)
-                {
-                    return ExpirationStatus.Expired;
-                }
-                else if (daysUntilExpiry < ExpirationDateCheck)
-                {
-                    return ExpirationStatus.Expiring;
-                }
-                else
-                {
-                    return ExpirationStatus.Fresh;
-                }
-            }
-        }
-
         [Comment("Flag for favourite products.")]
         public bool IsFavourite { get; set; } = false;
 

@@ -45,7 +45,7 @@ Scantry is an N-tier ASP.NET Core MVC web application designed to help household
 ## 🏁 Getting Started (Local Development)
 1. Clone the repository:
 2. Bash
-`git clone https://github.com/your-username/Scantry.git`
+`git clone https://github.com/gothbanshee/ScantryMVC.git`
 3. Update your connection string in `appsettings.json` to point to your local SQL Server instance.
 4. Apply database migrations using the NuGet Package Manager Console or CLI:
 5. Bash
