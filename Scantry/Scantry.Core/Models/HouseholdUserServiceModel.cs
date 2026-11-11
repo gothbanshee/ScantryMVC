@@ -9,7 +9,7 @@ namespace Scantry.Core.Models
         public int HouseholdId { get; set; }
 
         [Required]
-        [MaxLength(450)]
+        [MaxLength(UserIdMaxLength)]
         public string ApplicationUserId { get; set; } = null!;
 
         [Required]

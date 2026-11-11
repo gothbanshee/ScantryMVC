@@ -379,6 +379,77 @@ namespace Scantry.Data.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("Scantry.Data.Models.Ticket", b =>
+                {
+                    b.Property<int>("TicketId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasComment("Primary key for the Ticket entity.");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TicketId"));
+
+                    b.Property<string>("AdminResponse")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(2000)")
+                        .HasComment("Admin response to ticket.");
+
+                    b.Property<string>("AssignedToAdminId")
+                        .HasMaxLength(450)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(450)")
+                        .HasComment("Id of the Admin working on the ticket.");
+
+                    b.Property<DateTime?>("CompletedOn")
+                        .HasColumnType("datetime2")
+                        .HasComment("Ticket resolve date; added on status Rejected or Completed.");
+
+                    b.Property<string>("CreatedByUserId")
+                        .HasMaxLength(450)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(450)")
+                        .HasComment("Id of the User that created the ticket.");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2")
+                        .HasComment("Ticket create date.");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(2000)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(2000)")
+                        .HasComment("Problem description; provided by user.");
+
+                    b.Property<int?>("HouseholdId")
+                        .HasColumnType("int")
+                        .HasComment("Id of the reported Household, if applicable.");
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("int")
+                        .HasComment("Id of the reported Product, if applicable.");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int")
+                        .HasComment("Current status of the ticket; changed by admin.");
+
+                    b.Property<int>("TicketType")
+                        .HasColumnType("int")
+                        .HasComment("Ticket type; initially set by user.");
+
+                    b.HasKey("TicketId");
+
+                    b.HasIndex("AssignedToAdminId");
+
+                    b.HasIndex("CreatedByUserId");
+
+                    b.HasIndex("HouseholdId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Tickets");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -466,6 +537,37 @@ namespace Scantry.Data.Migrations
                     b.Navigation("ApplicationUser");
 
                     b.Navigation("Household");
+                });
+
+            modelBuilder.Entity("Scantry.Data.Models.Ticket", b =>
+                {
+                    b.HasOne("Scantry.Data.Models.ApplicationUser", "Admin")
+                        .WithMany()
+                        .HasForeignKey("AssignedToAdminId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Scantry.Data.Models.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Scantry.Data.Models.Household", "Household")
+                        .WithMany()
+                        .HasForeignKey("HouseholdId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Scantry.Data.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Admin");
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("Household");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Scantry.Data.Models.ApplicationUser", b =>

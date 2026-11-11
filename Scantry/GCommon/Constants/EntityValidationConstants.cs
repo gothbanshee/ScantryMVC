@@ -23,5 +23,9 @@
         public const int CategoryMinLength = 4;
         public const int CategoryMaxLength = 20;
         public const int ExpirationDateCheck = 10;
+
+        /* Ticket */
+        public const int TicketTypeMaxLength = 39;
+        public const int TicketTextMaxLength = 2000;
     }
 }

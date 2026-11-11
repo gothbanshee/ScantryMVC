@@ -14,41 +14,67 @@ namespace Scantry.Data
 
         public DbSet<HouseholdProduct> HouseholdProducts { get; set; }
 
+        public DbSet<Ticket> Tickets { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
             builder.Entity<HouseholdProduct>()
-                .HasOne(hp => hp.Household)
-                .WithMany(h => h.HouseholdProducts)
-                .HasForeignKey(hp => hp.HouseholdId)
-                .OnDelete(DeleteBehavior.Cascade);
+                   .HasOne(hp => hp.Household)
+                   .WithMany(h => h.HouseholdProducts)
+                   .HasForeignKey(hp => hp.HouseholdId)
+                   .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<HouseholdProduct>()
-                .HasOne(hp => hp.Product)
-                .WithMany()
-                .HasForeignKey(hp => hp.ProductId)
-                .OnDelete(DeleteBehavior.Restrict);
+                   .HasOne(hp => hp.Product)
+                   .WithMany()
+                   .HasForeignKey(hp => hp.ProductId)
+                   .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<HouseholdUser>()
-                .HasOne(hu => hu.Household)
-                .WithMany(h => h.HouseholdUsers)
-                .HasForeignKey(hu => hu.HouseholdId)
-                .OnDelete(DeleteBehavior.Cascade);
+                   .HasOne(hu => hu.Household)
+                   .WithMany(h => h.HouseholdUsers)
+                   .HasForeignKey(hu => hu.HouseholdId)
+                   .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<HouseholdUser>(entity =>
             {
                 entity.HasKey(hu => new { hu.HouseholdId, hu.ApplicationUserId });
 
                 entity.HasOne(hu => hu.ApplicationUser)
-                .WithMany(u => u.UserHouseholds)
-                .HasForeignKey(hu => hu.ApplicationUserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                      .WithMany(u => u.UserHouseholds)
+                      .HasForeignKey(hu => hu.ApplicationUserId)
+                      .OnDelete(DeleteBehavior.Cascade);
             });
 
             builder.Entity<Product>()
-                .Property(p => p.SizeValue)
-                .HasColumnType("decimal(18,2)");
+                   .Property(p => p.SizeValue)
+                   .HasColumnType("decimal(18,2)");
+
+            builder.Entity<Ticket>()
+                   .HasOne(t => t.ApplicationUser)
+                   .WithMany()
+                   .HasForeignKey(t => t.CreatedByUserId)
+                   .OnDelete(DeleteBehavior.SetNull);
+
+            builder.Entity<Ticket>()
+                   .HasOne(t => t.Admin)
+                   .WithMany()
+                   .HasForeignKey(t => t.AssignedToAdminId)
+                   .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Ticket>()
+                   .HasOne(t => t.Household)
+                   .WithMany()
+                   .HasForeignKey(t => t.HouseholdId)
+                   .OnDelete(DeleteBehavior.SetNull);
+
+            builder.Entity<Ticket>()
+                   .HasOne(t => t.Product)
+                   .WithMany()
+                   .HasForeignKey(t => t.ProductId)
+                   .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }
