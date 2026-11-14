@@ -199,7 +199,7 @@ namespace Scantry.Controllers
 
         private static List<string> GetCategoriesList()
         {
-            return typeof(HouseholdProductCategories)
+            return typeof(HouseholdProductCategory)
                 .GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
                 .Where(f => f.IsLiteral && !f.IsInitOnly && f.FieldType == typeof(string))
                 .Select(f => (string)f.GetValue(null)!)

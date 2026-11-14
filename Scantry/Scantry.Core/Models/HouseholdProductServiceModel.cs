@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Scantry.GCommon.Enums;
+﻿using Scantry.GCommon.Enums;
 using System.ComponentModel.DataAnnotations;
 using static Scantry.GCommon.Constants.EntityValidationConstants;
-using static Scantry.GCommon.Constants.UserValidationConstants;
+using static Scantry.GCommon.Messages.HouseholdProductMessages;
+
 
 namespace Scantry.Core.Models
 {
@@ -11,17 +11,19 @@ namespace Scantry.Core.Models
         public int HouseholdProductId { get; set; }
 
         [Required]
-        [StringLength(CategoryMaxLength, MinimumLength = CategoryMinLength,
-                ErrorMessage = "The Category name must be between {2} and {1} characters long.")]
-        [Unicode(false)]
-        public string Category { get; set; } = null!;         // see Class HouseholdProductCategories for options
+        public HouseholdProductCategory Category { get; set; }
 
+        [Range(0, int.MaxValue, ErrorMessage = ProductQuantityNegative)]
+        [Display(Name = "Current quantity")]
         public int CurrentQuantity { get; set; }
 
+        [Range(0, int.MaxValue, ErrorMessage = ProductThresholdNegative)]
+        [Display(Name = "Minimum threshold")]
         public int MinimumThreshold { get; set; }
 
         public bool IsLowStock => CurrentQuantity <= MinimumThreshold;
 
+        [Display(Name = "Expiration date")]
         public DateOnly? ExpirationDate { get; set; }
 
         public ExpirationStatus Status

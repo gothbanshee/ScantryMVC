@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Scantry.GCommon.Enums;
+using System.ComponentModel.DataAnnotations;
 using static Scantry.GCommon.Constants.EntityValidationConstants;
 using static Scantry.GCommon.Messages.HouseholdProductMessages;
 
@@ -9,17 +10,21 @@ namespace Scantry.Core.Models
         public int HouseholdProductId { get; set; }
 
         [Required]
-        [MaxLength(CategoryMaxLength)]
-        public string Category { get; set; } = null!;
+        public HouseholdProductCategory Category { get; set; }
 
         [Required]
         [Range(0, int.MaxValue, ErrorMessage = ProductQuantityNegative)]
+        [Display(Name = "Current quantity")]
         public int CurrentQuantity { get; set; }
 
         [Required]
         [Range(0, int.MaxValue, ErrorMessage = ProductThresholdNegative)]
+        [Display(Name = "Minimum threshold")]
         public int MinimumThreshold { get; set; }
+
+        [Display(Name = "Expiration date")]
         public DateOnly? ExpirationDate { get; set; }
+
 
         public string? ProductName { get; set; }
         public string? ProductTypeAndVariant { get; set; }

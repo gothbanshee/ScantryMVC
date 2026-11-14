@@ -14,10 +14,8 @@ namespace Scantry.Data.Models
         public int HouseholdProductId { get; set; }
 
         [Required]
-        [MaxLength(CategoryMaxLength)]
-        [Unicode(false)]
         [Comment("Category of the product - user-defined.")]
-        public string Category { get; set; } = null!;         // see Class HouseholdProductCategories for options
+        public HouseholdProductCategory Category { get; set; }
 
         [Comment("Current quantity of the product in the household.")]
         public int CurrentQuantity { get; set; }

@@ -26,6 +26,7 @@
 
         /* Ticket */
         public const int TicketTypeMaxLength = 39;
+        public const int TicketTextMinLength = 10;
         public const int TicketTextMaxLength = 2000;
     }
 }

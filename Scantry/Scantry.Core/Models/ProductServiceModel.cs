@@ -17,6 +17,7 @@ namespace Scantry.Core.Models
         [StringLength(ProductTypeMaxLength, MinimumLength = ProductTypeMinLength,
                 ErrorMessage = "The Product type name must be between {2} and {1} characters long.")]
         [Unicode(true)]
+        [Display(Name = "Product type")]
         public required string ProductType { get; set; }    // e.g., "Toothpaste"
 
         [Required]
@@ -35,12 +36,15 @@ namespace Scantry.Core.Models
                 ErrorMessage = "The Variant name cannot be more than {1} characters long.")]
         [Unicode(true)]
         public string? Variant { get; set; }                // e.g., "Whitening / Charcoal"
+
+        [Display(Name = "Size")]
         public decimal SizeValue { get; set; }
 
         [Required]
         [StringLength(SizeUnitMaxLength, MinimumLength = SizeUnitMinLength,
                 ErrorMessage = "The size unit must be between {2} and {1} characters long.")]
         [Unicode(false)]
+        [Display(Name = "Size unit")]
         public required string SizeUnit { get; set; }       // e.g., "ml" -- see Class SizeUnits for options
 
     }

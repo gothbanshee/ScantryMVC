@@ -39,7 +39,7 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label asp-for="ProductType" class="form-label fw-semibold">Product type</label>
+                                <label asp-for="ProductType" class="form-label fw-semibold"></label>
                                 <input asp-for="ProductType" class="form-control" />
                                 <span asp-validation-for="ProductType" class="text-danger small"></span>
                             </div>
@@ -52,12 +52,12 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label asp-for="SizeValue" class="form-label fw-semibold">Size</label>
+                                <label asp-for="SizeValue" class="form-label fw-semibold"></label>
                                 <input asp-for="SizeValue" class="form-control" type="number" step="0.01" />
                                 <span asp-validation-for="SizeValue" class="text-danger small"></span>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label asp-for="SizeUnit" class="form-label fw-semibold">Size unit</label>
+                                <label asp-for="SizeUnit" class="form-label fw-semibold"></label>
                                 <select asp-for="SizeUnit" asp-items="ViewBag.SizeUnits" class="form-select"></select>
                                 <span asp-validation-for="SizeUnit" class="text-danger small"></span>
                             </div>
